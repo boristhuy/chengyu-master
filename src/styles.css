@@ -1,1 +1,27 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100%;
+  min-height: 100%;
+}
+
+.page-header {
+  background-color: #d32d24;
+  border-bottom: 5px solid #BD0E14;
+  color: white;
+  height: 64px;
+  width: 100%;
+}
+
+.page-header-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.page-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100% - 64px);
+}

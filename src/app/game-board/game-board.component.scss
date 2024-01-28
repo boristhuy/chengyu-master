@@ -1,0 +1,83 @@
+.game-score {
+  display: flex;
+  color: #bfbebe;
+  padding: 1rem 0;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.game-container {
+  background: white;
+  border: 5px solid #dee2e6;
+  border-radius: 50%;
+  position: relative;
+  height: 350px;
+  width: 350px;
+}
+
+.char {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-weight: 500 !important;
+  border: 3px solid #000000 !important;
+  outline-offset: -10px;
+}
+
+.char-unchecked {
+  background: #bfbebe !important;
+  color: #000000 !important;
+  outline: 2px solid #ffffff;
+
+  &:hover {
+    background: #bfbebe !important;
+    color: #000000 !important;
+    outline: 2px solid #ffffff;
+  }
+}
+
+.char-checked {
+  background: #d32d24 !important;
+  color: white !important;
+  outline: 2px solid white;
+
+  &:hover {
+    background: #d32d24 !important;
+    color: white !important;
+    outline: 2px solid white;
+  }
+}
+
+.chengyu-correct {
+  animation: spin 0.25s linear;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.chengyu-incorrect {
+  animation: horizontal-shaking 0.25s;
+}
+
+@keyframes horizontal-shaking {
+  0% {
+    transform: translateX(0)
+  }
+  25% {
+    transform: translateX(10px)
+  }
+  50% {
+    transform: translateX(-10px)
+  }
+  75% {
+    transform: translateX(10px)
+  }
+  100% {
+    transform: translateX(0)
+  }
+}
