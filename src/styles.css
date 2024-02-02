@@ -3,6 +3,10 @@ html, body {
   min-height: 100%;
 }
 
+body {
+  background-color: #efefef;
+}
+
 .page-header {
   background-color: #d32d24;
   border-bottom: 5px solid #BD0E14;
@@ -22,6 +26,7 @@ html, body {
 .page-main {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: calc(100% - 64px);
+  height: 100%;
+  overflow: hidden;
+  padding: 4rem 0;
 }

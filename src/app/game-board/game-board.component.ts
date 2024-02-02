@@ -1,18 +1,25 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {NgIf} from "@angular/common";
+import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {GameCanvasComponent} from "./game-canvas/game-canvas.component";
-import {GameTimerComponent} from "./game-timer/game-timer.component";
+import {animate, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'chengyu-game-board',
   standalone: true,
+  animations: [
+    trigger('popIn', [
+      transition(':enter', [
+        style({opacity: 0, transform: 'scale(0)'}),
+        animate('0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({opacity: 1, transform: 'scale(1)'})), // End at fully visible and scaled to normal
+      ]),
+    ])
+  ],
   imports: [
-    NgIf,
-    ReactiveFormsModule,
+    CommonModule,
     FormsModule,
     GameCanvasComponent,
-    GameTimerComponent
+    ReactiveFormsModule,
   ],
   templateUrl: './game-board.component.html',
   styleUrl: './game-board.component.scss'
@@ -82,7 +89,7 @@ export class GameBoardComponent implements OnInit {
           this.handleIncorrectChengyu();
         }
       }
-    }, 1500)
+    }, 2500)
   }
 
   private redrawCanvas() {
@@ -124,7 +131,6 @@ export class GameBoardComponent implements OnInit {
     const currentChengyu = this.chengyus[this.currentChengyuIndex];
     this.shuffledChengyu = shuffle(currentChengyu);
     this.resetSelectedChengyu();
-
     setTimeout(() => {
       this.correctChengyu = false;
     }, 250);

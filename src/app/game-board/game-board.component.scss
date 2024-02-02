@@ -1,49 +1,84 @@
-.game-score {
+.score-container {
   display: flex;
-  color: #bfbebe;
-  padding: 1rem 0;
-  justify-content: space-between;
-  font-weight: 700;
-  font-size: 1.25rem;
+  color: #565656;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .score-label {
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    text-transform: uppercase;;
+  }
+
+  .score-value {
+    text-align: center;
+    font-family: 'Protest Strike', sans-serif;
+    font-size: 3.5rem;
+    line-height: 1;
+  }
+}
+
+.chengyu-selected-container {
+  color: #565656;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 4.5rem;
+  font-weight: 500 !important;
+  min-height: 125px;
+  margin: 1rem 0;
+  width: 100%;
 }
 
 .game-container {
   background: white;
-  border: 5px solid #dee2e6;
+  border: 2px solid #dedede;
   border-radius: 50%;
   position: relative;
-  height: 350px;
-  width: 350px;
+  height: 275px;
+  width: 275px;
 }
 
 .char {
+  align-items: center;
+  border-radius: 50%;
+  border: 2px solid #565656 !important;
+  display: flex;
   font-family: 'Ma Shan Zheng', cursive;
+  font-size: 2.5rem;
   font-weight: 500 !important;
-  border: 3px solid #000000 !important;
+  height: 72px;
+  justify-content: center;
   outline-offset: -10px;
+  position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  width: 72px;
 }
 
 .char-unchecked {
-  background: #bfbebe !important;
-  color: #000000 !important;
-  outline: 2px solid #ffffff;
+  background: #dedede !important;
+  color: #565656 !important;
+  outline: 1px solid #ffffff;
 
   &:hover {
-    background: #bfbebe !important;
-    color: #000000 !important;
-    outline: 2px solid #ffffff;
+    background: #dedede !important;
+    color: #565656 !important;
+    outline: 1px solid #ffffff;
   }
 }
 
 .char-checked {
-  background: #d32d24 !important;
+  background: #ed7a75 !important;
   color: white !important;
-  outline: 2px solid white;
+  outline: 1px solid white;
 
   &:hover {
-    background: #d32d24 !important;
+    background: #ed7a75 !important;
     color: white !important;
-    outline: 2px solid white;
+    outline: 1px solid white;
   }
 }
 

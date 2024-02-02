@@ -14,8 +14,8 @@ export class GameCanvasComponent implements AfterViewInit {
 
   private ctx!: CanvasRenderingContext2D;
 
-  width = 350;
-  height = 350;
+  width = 275;
+  height = 275;
 
   ngAfterViewInit(): void {
     this.ctx = this.canvasElement.nativeElement.getContext('2d')!;
@@ -30,7 +30,7 @@ export class GameCanvasComponent implements AfterViewInit {
     const canvasEndY = endY - rect.top;
 
     this.ctx.beginPath();
-    this.ctx.strokeStyle = '#d32d24';
+    this.ctx.strokeStyle = '#ed7a75';
     this.ctx.lineWidth = 5;
     this.ctx.moveTo(canvasStartX, canvasStartY);
     this.ctx.lineTo(canvasEndX, canvasEndY);
