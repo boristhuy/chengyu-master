@@ -83,7 +83,7 @@ export class GameBoardComponent implements AfterViewInit {
     if (this.selectedChengyuChars.length === 4) {
       setTimeout(() => {
         this.validateSelectedChengyu();
-      }, 1000)
+      }, 500)
     }
   }
 
