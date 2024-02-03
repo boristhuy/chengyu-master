@@ -1,0 +1,18 @@
+.game-timer {
+  position: absolute;
+  top: -2.5px;
+  left: -2.5px;
+
+  .timer-circle {
+    fill: none;
+    stroke: #565656;
+    stroke-dasharray: 852;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 1s linear;
+  }
+
+  .timer-circle.transition-none {
+    transition: none;
+  }
+}

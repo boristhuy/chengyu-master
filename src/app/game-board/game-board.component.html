@@ -1,16 +1,7 @@
-<div class="score-container">
-  <div class="score">
-    <div class="score-label">
-      Score
-    </div>
-    <div class="score-value">
-      80
-    </div>
-  </div>
-</div>
+<chengyu-game-score [score]="score" (scoreUpdated)="goToNextChengyu()"></chengyu-game-score>
 
-<div class="chengyu-selected-container">
-    <span *ngFor="let char of selectedChengyuChars" @popIn>
+<div class="chengyu-container">
+    <span *ngFor="let char of selectedChengyuChars" @charSelected>
       {{ char.chengyuChar }}
     </span>
 </div>
@@ -50,6 +41,8 @@
     </div>
   </div>
   <div class="position-absolute top-0 start-0 z-0">
-    <chengyu-game-canvas #canvasComp></chengyu-game-canvas>
+    <chengyu-game-canvas #gameCanvas></chengyu-game-canvas>
   </div>
+
+  <chengyu-game-timer (timerEnded)="handleTimerEnded()"></chengyu-game-timer>
 </div>

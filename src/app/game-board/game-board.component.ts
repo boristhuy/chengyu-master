@@ -1,17 +1,19 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {GameCanvasComponent} from "./game-canvas/game-canvas.component";
 import {animate, style, transition, trigger} from "@angular/animations";
+import {GameScoreComponent} from "./game-score/game-score.component";
+import {GameTimerComponent} from "./game-timer/game-timer.component";
 
 @Component({
   selector: 'chengyu-game-board',
   standalone: true,
   animations: [
-    trigger('popIn', [
+    trigger('charSelected', [
       transition(':enter', [
         style({opacity: 0, transform: 'scale(0)'}),
-        animate('0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({opacity: 1, transform: 'scale(1)'})), // End at fully visible and scaled to normal
+        animate('0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({opacity: 1, transform: 'scale(1)'})),
       ]),
     ])
   ],
@@ -20,11 +22,14 @@ import {animate, style, transition, trigger} from "@angular/animations";
     FormsModule,
     GameCanvasComponent,
     ReactiveFormsModule,
+    GameScoreComponent,
+    GameTimerComponent,
   ],
   templateUrl: './game-board.component.html',
   styleUrl: './game-board.component.scss'
 })
-export class GameBoardComponent implements OnInit {
+export class GameBoardComponent implements AfterViewInit {
+
   chengyus = [
     "众所周知",
     "前所未有",
@@ -33,12 +38,14 @@ export class GameBoardComponent implements OnInit {
     "先发制人",
   ];
 
-  currentChengyuIndex = 0;
+  currentChengyuIndex = -1;
   shuffledChengyu = '';
   selectedChengyuChars: ChengyuCharElement[] = [];
 
   correctChengyu = false;
   incorrectChengyu = false;
+
+  score = 0;
 
   checkboxes = {
     checkbox1: false,
@@ -47,17 +54,14 @@ export class GameBoardComponent implements OnInit {
     checkbox4: false
   };
 
-  @ViewChild('canvasComp')
-  canvasComponent!: GameCanvasComponent;
+  @ViewChild('gameCanvas')
+  private canvasComponent!: GameCanvasComponent;
 
-  ngOnInit(): void {
-    this.startGame();
-  }
+  @ViewChild(GameTimerComponent, {static: false})
+  private timerComponent!: GameTimerComponent;
 
-  private startGame(): void {
-    const currentChengyu = this.chengyus[this.currentChengyuIndex];
-    this.shuffledChengyu = shuffle(currentChengyu);
-    this.selectedChengyuChars = [];
+  ngAfterViewInit(): void {
+    Promise.resolve().then(() => (this.selectNextChengyu()));
   }
 
   selectChengyuChar(chengyuChar: string, elementId: string, event: Event) {
@@ -68,32 +72,49 @@ export class GameBoardComponent implements OnInit {
       this.selectedChengyuChars.push({chengyuChar, elementId});
       // @ts-ignore
       this.checkboxes[elementId] = true;
-      this.redrawCanvas();
+      this.redrawLines();
     } else if (existingChengyuCharIndex === this.selectedChengyuChars.length - 1) {
       this.selectedChengyuChars.pop();
       // @ts-ignore
       this.checkboxes[elementId] = false;
-      this.redrawCanvas();
+      this.redrawLines();
     }
 
-    // Win condition
-    setTimeout(() => {
-      if (this.selectedChengyuChars.length === 4) {
-        if (this.isSelectedChengyuCharsCorrect()) {
-          if (this.isLastChengyu()) {
-            this.startGame();
-          } else {
-            this.handleCorrectChengyu();
-          }
-        } else {
-          this.handleIncorrectChengyu();
-        }
-      }
-    }, 2500)
+    if (this.selectedChengyuChars.length === 4) {
+      setTimeout(() => {
+        this.validateSelectedChengyu();
+      }, 1000)
+    }
   }
 
-  private redrawCanvas() {
-    this.canvasComponent.clearCanvas();
+  goToNextChengyu() {
+    this.correctChengyu = true;
+
+    this.selectNextChengyu();
+
+    setTimeout(() => {
+      this.correctChengyu = false;
+    }, 250);
+  }
+
+  handleTimerEnded() {
+    this.goToNextChengyu();
+  }
+
+  private validateSelectedChengyu(): void {
+    if (this.isSelectedChengyuCharsCorrect()) {
+      if (this.isLastChengyu()) {
+        // TODO
+      } else {
+        this.handleCorrectChengyu();
+      }
+    } else {
+      this.handleIncorrectChengyu();
+    }
+  }
+
+  private redrawLines(): void {
+    this.canvasComponent?.clearCanvas();
 
     if (this.selectedChengyuChars.length <= 1) {
       return;
@@ -125,20 +146,40 @@ export class GameBoardComponent implements OnInit {
     return currentChengyu === this.selectedChengyuChars.map(char => char.chengyuChar).join('');
   }
 
-  private handleCorrectChengyu() {
-    this.correctChengyu = true;
+  private handleCorrectChengyu(): void {
+    this.timerComponent.stopTimer();
+
+    this.computeScore();
+  }
+
+  private selectNextChengyu(): void {
+    this.resetSelectedChengyu();
+
     this.currentChengyuIndex = this.currentChengyuIndex + 1;
     const currentChengyu = this.chengyus[this.currentChengyuIndex];
     this.shuffledChengyu = shuffle(currentChengyu);
-    this.resetSelectedChengyu();
-    setTimeout(() => {
-      this.correctChengyu = false;
-    }, 250);
+
+    this.timerComponent.startTimer();
   }
 
-  private handleIncorrectChengyu() {
+  private computeScore(): void {
+    const basePoint = 100;
+
+    const remainingTime = this.timerComponent.getRemainingTime();
+    const timeBonus = this.computeTimeBonus(remainingTime);
+
+    this.score += basePoint + timeBonus;
+  }
+
+  private computeTimeBonus(remainingTime: number): number {
+    return remainingTime * 10;
+  }
+
+  private handleIncorrectChengyu(): void {
     this.incorrectChengyu = true;
+
     this.resetSelectedChengyu();
+
     setTimeout(() => {
       this.incorrectChengyu = false;
     }, 250);
@@ -146,7 +187,7 @@ export class GameBoardComponent implements OnInit {
 
   private resetSelectedChengyu() {
     this.selectedChengyuChars = [];
-    this.redrawCanvas();
+    this.redrawLines();
     this.resetCheckboxes();
   }
 
@@ -162,7 +203,7 @@ export class GameBoardComponent implements OnInit {
   }
 }
 
-export interface ChengyuCharElement {
+interface ChengyuCharElement {
   chengyuChar: string;
   elementId: string;
 }

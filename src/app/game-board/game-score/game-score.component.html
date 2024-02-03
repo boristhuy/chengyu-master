@@ -1,0 +1,13 @@
+<div class="score-container">
+  <div class="score-label">
+    Score
+  </div>
+  <div class="score-value">
+    <div>
+      {{ scoreDisplayed$ | async | number:'1.0-0' }}
+    </div>
+    <div *ngIf="scoreAdded$ | async as scoreAdded" class="score-added" @scoreAdded>
+      +{{ scoreAdded }}
+    </div>
+  </div>
+</div>
