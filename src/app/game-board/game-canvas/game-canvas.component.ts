@@ -30,7 +30,7 @@ export class GameCanvasComponent implements AfterViewInit {
     const canvasEndY = endY - rect.top;
 
     this.ctx.beginPath();
-    this.ctx.strokeStyle = '#ff6680';
+    this.ctx.strokeStyle = '#f6c48e';
     this.ctx.lineWidth = 6;
     this.ctx.moveTo(canvasStartX, canvasStartY);
     this.ctx.lineTo(canvasEndX, canvasEndY);

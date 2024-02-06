@@ -4,14 +4,18 @@ html, body {
 }
 
 body {
-  background-color: #262626;
+  background-color: #fbfafb;
 }
 
 :root {
-  --app-color-primary: #ff6680;
-  --app-color-primary-dark: #b34766;
-  --app-color-dark: #807f86;
+  --app-color-primary: #f6d091;
+  --app-color-primary-dark: #ddb080;
+  --app-color-dark: #091017;
   --app-color-light: #fefffe;
+
+  --app-hanzi-font-family: 'Ma Shan Zheng', cursive;
+  --app-lato-font-family: 'Lato', sans-serif;
+  --app-titan-font-family: 'Titan One', sans-serif;
 }
 
 .page-header {

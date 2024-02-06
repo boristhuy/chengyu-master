@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Ma Shan Zheng', cursive;
+  font-family: var(--app-hanzi-font-family);
   font-size: 4.5rem;
   font-weight: 500 !important;
   min-height: 125px;
@@ -12,7 +12,7 @@
   width: 100%;
 }
 
-.game-container {
+.char-container {
   border-radius: 50%;
   padding: 1.75rem;
   position: relative;
@@ -24,7 +24,7 @@
   align-items: center;
   border-radius: 50%;
   display: flex;
-  font-family: 'Ma Shan Zheng', cursive;
+  font-family: var(--app-hanzi-font-family);
   font-size: 2.5rem;
   font-weight: 500 !important;
   height: 72px;
@@ -41,7 +41,7 @@
 
 .char-checked {
   background: var(--app-color-primary) !important;
-  box-shadow: inset 0 -6px 0 var(--app-color-primary-dark);
+  box-shadow: inset 0 -5px 0 var(--app-color-primary-dark);
   color: var(--app-color-light) !important;
 }
 

@@ -1,0 +1,21 @@
+<div class="start-game-container">
+  <div class="start-game-title">
+    汉字
+  </div>
+  <div class="start-game-subtitle">
+    Fever!
+  </div>
+
+  <div class="start-game-score">
+    <div class="score-label">
+      Best score
+    </div>
+    <div class="score-value">
+      {{ 0 | number:'1.0-0' }}
+    </div>
+  </div>
+
+  <button class="start-game-button" (click)="startGame()">
+    Play now!
+  </button>
+</div>

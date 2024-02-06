@@ -1,11 +1,11 @@
 import {Routes} from '@angular/router';
 import {GameBoardComponent} from "./game-board/game-board.component";
-import {StartComponent} from "./start/start.component";
+import {StartGameComponent} from "./start-game/start-game.component";
 
 export const routes: Routes = [
   {
     path: 'start',
-    component: StartComponent
+    component: StartGameComponent
   },
   {
     path: 'game',

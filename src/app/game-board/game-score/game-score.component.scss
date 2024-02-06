@@ -8,14 +8,14 @@
 
   .score-label {
     text-align: center;
-    font-family: 'Lato', sans-serif;
+    font-family: var(--app-lato-font-family);
     font-size: 1rem;
     text-transform: uppercase;;
   }
 
   .score-value {
     text-align: center;
-    font-family: 'Protest Strike', sans-serif;
+    font-family: var(--app-titan-font-family);
     font-size: 3.5rem;
     letter-spacing: -2px;
     line-height: 1;
