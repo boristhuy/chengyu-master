@@ -1,21 +1,20 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
 import {
   BehaviorSubject,
-  combineLatest,
+  delay,
   endWith,
-  filter,
   finalize,
   interval,
   map,
   Observable,
   pairwise,
-  share,
+  ReplaySubject,
   startWith,
+  Subscription,
   switchMap,
   take,
-  timer
+  tap
 } from "rxjs";
-import {animate, keyframes, style, transition, trigger} from "@angular/animations";
 import {AsyncPipe, DecimalPipe, NgIf} from "@angular/common";
 
 @Component({
@@ -26,59 +25,41 @@ import {AsyncPipe, DecimalPipe, NgIf} from "@angular/common";
     AsyncPipe,
     DecimalPipe
   ],
-  animations: [
-    trigger('scoreAdded', [
-      transition(':enter', [
-        animate('1s ease-out', keyframes([
-          style({opacity: 0, transform: 'scale(0.5)', offset: 0}),
-          style({opacity: 1, transform: 'scale(1.5)', offset: 0.5}),
-          style({opacity: 1, transform: 'scale(1)', offset: 0.75}),
-        ]))
-      ])
-    ]),
-  ],
+  animations: [],
   templateUrl: './game-score.component.html',
   styleUrl: './game-score.component.scss'
 })
-export class GameScoreComponent {
-  private scoreSource$ = new BehaviorSubject<number>(0);
-  scoreAdded$: Observable<number>;
+export class GameScoreComponent implements OnDestroy {
+  scoreSource$ = new BehaviorSubject<number>(0);
+  scoreUpdated$ = new ReplaySubject<void>(1);
+  scoreUpdatedSubscription!: Subscription;
   scoreDisplayed$: Observable<number>;
 
   @Input() set score(value: number) {
     this.scoreSource$.next(value);
   }
 
-  @Output() scoreUpdated = new EventEmitter<void>();
+  @Output()
+  scoreUpdated = new EventEmitter<void>();
 
   constructor() {
-    this.scoreAdded$ = this.scoreSource$.pipe(
+    this.scoreDisplayed$ = this.scoreSource$.pipe(
       pairwise(),
       switchMap(([previousScore, currentScore]) => {
-        const scoreAdded = currentScore - previousScore;
-        // Emit scoreAdded immediately, then emit 0 after 1 second
-        return timer(1000).pipe(
-          map(() => 0),
-          startWith(scoreAdded)
+        return this.animateScoreDisplayed(previousScore, currentScore).pipe(
+          finalize(() => this.scoreUpdated$.next())
         )
       }),
       startWith(0),
-      share(),
     );
 
-    this.scoreDisplayed$ = combineLatest([this.scoreAdded$, this.scoreSource$.pipe(pairwise())]).pipe(
-      filter(([scoreAdded, _]) => scoreAdded === 0),
-      map(([_, scorePair]) => scorePair),
-      switchMap(([previousScore, currentScore]) => {
-        return this.animateScoreDisplayed(previousScore, currentScore).pipe(
-          finalize(() => this.scoreUpdated.next())
-        )
-      }),
-      startWith(0),
-    );
+    this.scoreUpdatedSubscription = this.scoreUpdated$.pipe(
+      delay(500),
+      tap(_ => this.scoreUpdated.next())
+    ).subscribe();
   }
 
-  private animateScoreDisplayed(previousScore: number, currentScore: number) {
+  animateScoreDisplayed(previousScore: number, currentScore: number) {
     const animationDuration = 500;
     const animationSteps = 50;
     const animationStepDuration = animationDuration / animationSteps;
@@ -89,4 +70,11 @@ export class GameScoreComponent {
       endWith(currentScore)
     );
   }
+
+  ngOnDestroy(): void {
+    if (this.scoreUpdatedSubscription) {
+      this.scoreUpdatedSubscription.unsubscribe();
+    }
+  }
+
 }

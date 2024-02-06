@@ -2,21 +2,15 @@ import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {GameCanvasComponent} from "./game-canvas/game-canvas.component";
-import {animate, style, transition, trigger} from "@angular/animations";
+import {animate, keyframes, query, stagger, style, transition, trigger} from "@angular/animations";
 import {GameScoreComponent} from "./game-score/game-score.component";
 import {GameTimerComponent} from "./game-timer/game-timer.component";
+import {gameBoardAnimation} from "./game-board.animation";
 
 @Component({
   selector: 'chengyu-game-board',
   standalone: true,
-  animations: [
-    trigger('charSelected', [
-      transition(':enter', [
-        style({opacity: 0, transform: 'scale(0)'}),
-        animate('0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({opacity: 1, transform: 'scale(1)'})),
-      ]),
-    ])
-  ],
+  animations: gameBoardAnimation,
   imports: [
     CommonModule,
     FormsModule,
@@ -55,10 +49,10 @@ export class GameBoardComponent implements AfterViewInit {
   };
 
   @ViewChild('gameCanvas')
-  private canvasComponent!: GameCanvasComponent;
+  canvasComponent!: GameCanvasComponent;
 
   @ViewChild(GameTimerComponent, {static: false})
-  private timerComponent!: GameTimerComponent;
+  timerComponent!: GameTimerComponent;
 
   ngAfterViewInit(): void {
     Promise.resolve().then(() => (this.selectNextChengyu()));
@@ -87,21 +81,11 @@ export class GameBoardComponent implements AfterViewInit {
     }
   }
 
-  goToNextChengyu() {
-    this.correctChengyu = true;
-
+  onGameTimerEnded() {
     this.selectNextChengyu();
-
-    setTimeout(() => {
-      this.correctChengyu = false;
-    }, 250);
   }
 
-  handleTimerEnded() {
-    this.goToNextChengyu();
-  }
-
-  private validateSelectedChengyu(): void {
+  validateSelectedChengyu(): void {
     if (this.isSelectedChengyuCharsCorrect()) {
       if (this.isLastChengyu()) {
         // TODO
@@ -113,7 +97,7 @@ export class GameBoardComponent implements AfterViewInit {
     }
   }
 
-  private redrawLines(): void {
+  redrawLines(): void {
     this.canvasComponent?.clearCanvas();
 
     if (this.selectedChengyuChars.length <= 1) {
@@ -141,18 +125,28 @@ export class GameBoardComponent implements AfterViewInit {
     }
   }
 
-  private isSelectedChengyuCharsCorrect(): boolean {
+  isSelectedChengyuCharsCorrect(): boolean {
     const currentChengyu = this.chengyus[this.currentChengyuIndex];
-    return currentChengyu === this.selectedChengyuChars.map(char => char.chengyuChar).join('');
+    return currentChengyu === this.selectedChengyuChars
+      .map(char => char.chengyuChar)
+      .join('');
   }
 
-  private handleCorrectChengyu(): void {
+  handleCorrectChengyu(): void {
     this.timerComponent.stopTimer();
-
     this.computeScore();
+    this.correctChengyu = true;
   }
 
-  private selectNextChengyu(): void {
+  handleIncorrectChengyu(): void {
+    this.incorrectChengyu = true;
+  }
+
+  selectNextChengyu(): void {
+    if (this.isLastChengyu()) {
+      return;
+    }
+
     this.resetSelectedChengyu();
 
     this.currentChengyuIndex = this.currentChengyuIndex + 1;
@@ -162,7 +156,27 @@ export class GameBoardComponent implements AfterViewInit {
     this.timerComponent.startTimer();
   }
 
-  private computeScore(): void {
+  computeTimeBonus(remainingTime: number): number {
+    return remainingTime * 10;
+  }
+
+  onCorrectChengyuAnimationDone() {
+    // TODO fix animation done callback being triggered on first load
+    if (this.correctChengyu) {
+      this.correctChengyu = false;
+      this.selectNextChengyu();
+    }
+  }
+
+  onIncorrectChengyuAnimationDone() {
+    // TODO fix animation done callback being triggered on first load
+    if (this.incorrectChengyu) {
+      this.incorrectChengyu = false;
+      this.resetSelectedChengyu();
+    }
+  }
+
+  computeScore(): void {
     const basePoint = 100;
 
     const remainingTime = this.timerComponent.getRemainingTime();
@@ -171,34 +185,20 @@ export class GameBoardComponent implements AfterViewInit {
     this.score += basePoint + timeBonus;
   }
 
-  private computeTimeBonus(remainingTime: number): number {
-    return remainingTime * 10;
-  }
-
-  private handleIncorrectChengyu(): void {
-    this.incorrectChengyu = true;
-
-    this.resetSelectedChengyu();
-
-    setTimeout(() => {
-      this.incorrectChengyu = false;
-    }, 250);
-  }
-
-  private resetSelectedChengyu() {
+  resetSelectedChengyu() {
     this.selectedChengyuChars = [];
     this.redrawLines();
     this.resetCheckboxes();
   }
 
-  private resetCheckboxes() {
+  resetCheckboxes() {
     Object.keys(this.checkboxes).forEach(key => {
       // @ts-ignore
       this.checkboxes[key] = false;
     });
   }
 
-  private isLastChengyu() {
+  isLastChengyu() {
     return this.currentChengyuIndex === this.chengyus.length - 1;
   }
 }

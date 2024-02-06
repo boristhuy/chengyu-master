@@ -9,7 +9,7 @@ import {finalize, Subscription, takeWhile, tap, timer} from "rxjs";
   styleUrl: './game-timer.component.scss'
 })
 export class GameTimerComponent implements OnDestroy {
-  timerInitialTime = 15;
+  timerInitialTime = 30;
   timerRemainingTime = this.timerInitialTime;
 
   timerSubscription!: Subscription;
@@ -40,7 +40,7 @@ export class GameTimerComponent implements OnDestroy {
     return this.timerRemainingTime;
   }
 
-  private iniTimer() {
+  iniTimer() {
     this.timerRemainingTime = this.timerInitialTime;
 
     if (this.timerSubscription) {
@@ -60,8 +60,8 @@ export class GameTimerComponent implements OnDestroy {
     ).subscribe();
   }
 
-  private updateStrokeDashoffset() {
-    const pathLength = 852;
+  updateStrokeDashoffset() {
+    const pathLength = 923.63;
 
     const offset = (1 - this.timerRemainingTime / this.timerInitialTime) * pathLength;
 

@@ -5,8 +5,8 @@
 
   .timer-circle {
     fill: none;
-    stroke: #565656;
-    stroke-dasharray: 852;
+    stroke: var(--app-color-primary);
+    stroke-dasharray: 923.63;
     transform: rotate(-90deg);
     transform-origin: 50% 50%;
     transition: stroke-dashoffset 1s linear;

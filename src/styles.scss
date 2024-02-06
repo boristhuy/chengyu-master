@@ -4,15 +4,17 @@ html, body {
 }
 
 body {
-  background-color: #efefef;
+  background-color: #262626;
+}
+
+:root {
+  --app-color-primary: #ff6680;
+  --app-color-primary-dark: #b34766;
+  --app-color-dark: #807f86;
+  --app-color-light: #fefffe;
 }
 
 .page-header {
-  background-color: #d32d24;
-  border-bottom: 5px solid #BD0E14;
-  color: white;
-  height: 64px;
-  width: 100%;
 }
 
 .page-header-content {

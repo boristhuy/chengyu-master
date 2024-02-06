@@ -1,5 +1,5 @@
 .chengyu-container {
-  color: #565656;
+  color: var(--app-color-dark);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,85 +13,38 @@
 }
 
 .game-container {
-  background: white;
-  border: 2px solid #dedede;
   border-radius: 50%;
+  padding: 1.75rem;
   position: relative;
-  height: 275px;
-  width: 275px;
+  height: 300px;
+  width: 300px;
 }
 
 .char {
   align-items: center;
   border-radius: 50%;
-  border: 2px solid #565656 !important;
   display: flex;
   font-family: 'Ma Shan Zheng', cursive;
   font-size: 2.5rem;
   font-weight: 500 !important;
   height: 72px;
   justify-content: center;
-  outline-offset: -10px;
   position: relative;
-  transition: background-color 0.3s ease, color 0.3s ease;
   width: 72px;
+  transition: border 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
 }
 
 .char-unchecked {
-  background: #dedede !important;
-  color: #565656 !important;
-  outline: 1px solid #ffffff;
-
-  &:hover {
-    background: #dedede !important;
-    color: #565656 !important;
-    outline: 1px solid #ffffff;
-  }
+  border: 2px solid var(--app-color-primary) !important;
+  color: var(--app-color-dark) !important;
 }
 
 .char-checked {
-  background: #ed7a75 !important;
-  color: white !important;
-  outline: 1px solid white;
-
-  &:hover {
-    background: #ed7a75 !important;
-    color: white !important;
-    outline: 1px solid white;
-  }
+  background: var(--app-color-primary) !important;
+  box-shadow: inset 0 -6px 0 var(--app-color-primary-dark);
+  color: var(--app-color-light) !important;
 }
 
 .chengyu-correct {
-  animation: spin 0.25s linear;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.chengyu-incorrect {
-  animation: horizontal-shaking 0.25s;
-}
-
-@keyframes horizontal-shaking {
-  0% {
-    transform: translateX(0)
-  }
-  25% {
-    transform: translateX(10px)
-  }
-  50% {
-    transform: translateX(-10px)
-  }
-  75% {
-    transform: translateX(10px)
-  }
-  100% {
-    transform: translateX(0)
-  }
+  color: var(--app-color-primary);
 }
