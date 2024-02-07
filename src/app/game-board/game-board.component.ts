@@ -6,6 +6,7 @@ import {animate, keyframes, query, stagger, style, transition, trigger} from "@a
 import {GameScoreComponent} from "./game-score/game-score.component";
 import {GameTimerComponent} from "./game-timer/game-timer.component";
 import {gameBoardAnimation} from "./game-board.animation";
+import {HotkeyDirective} from "./hotkey.directive";
 
 @Component({
   selector: 'chengyu-game-board',
@@ -15,9 +16,10 @@ import {gameBoardAnimation} from "./game-board.animation";
     CommonModule,
     FormsModule,
     GameCanvasComponent,
-    ReactiveFormsModule,
     GameScoreComponent,
     GameTimerComponent,
+    HotkeyDirective,
+    ReactiveFormsModule,
   ],
   templateUrl: './game-board.component.html',
   styleUrl: './game-board.component.scss'

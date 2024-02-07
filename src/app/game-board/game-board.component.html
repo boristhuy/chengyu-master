@@ -15,6 +15,7 @@
   <div class="row g-0 position-relative h-100 z-1">
     <div class="col-12 d-flex justify-content-center align-items-center">
       <input type="checkbox" class="btn-check" id="btn-check-1" autocomplete="off"
+             hotkey="ArrowUp"
              (click)="selectChengyuChar(shuffledChengyu[0], 'checkbox1', $event)">
       <label id="checkbox1" class="char " for="btn-check-1"
              [class.char-checked]="checkboxes.checkbox1"
@@ -24,6 +25,7 @@
     </div>
     <div class="col-6 d-flex justify-content-start align-items-center">
       <input type="checkbox" class="btn-check" id="btn-check-2" autocomplete="off"
+             hotkey="ArrowLeft"
              (click)="selectChengyuChar(shuffledChengyu[1], 'checkbox2', $event)">
       <label id="checkbox2" class="char" for="btn-check-2"
              [class.char-checked]="checkboxes.checkbox2"
@@ -33,6 +35,7 @@
     </div>
     <div class="col-6 d-flex justify-content-end align-items-center">
       <input type="checkbox" class="btn-check" id="btn-check-3" autocomplete="off"
+             hotkey="ArrowRight"
              (click)="selectChengyuChar(shuffledChengyu[2], 'checkbox3', $event)">
       <label id="checkbox3" class="char" for="btn-check-3"
              [class.char-checked]="checkboxes.checkbox3"
@@ -42,6 +45,7 @@
     </div>
     <div class="col-12 d-flex justify-content-center align-items-center">
       <input type="checkbox" class="btn-check" id="btn-check-4" autocomplete="off"
+             hotkey="ArrowDown"
              (click)="selectChengyuChar(shuffledChengyu[3], 'checkbox4', $event)">
       <label id="checkbox4" class="char" for="btn-check-4"
              [class.char-checked]="checkboxes.checkbox4"
