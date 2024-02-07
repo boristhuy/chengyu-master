@@ -25,11 +25,11 @@ import {gameBoardAnimation} from "./game-board.animation";
 export class GameBoardComponent implements AfterViewInit {
 
   chengyus = [
-    "众所周知",
-    "前所未有",
-    "不可思议",
-    "千方百计",
-    "先发制人",
+    "学而不厌",
+    "温故知新",
+    "好学不倦",
+    "勤学好问",
+    "学无止境",
   ];
 
   currentChengyuIndex = -1;
@@ -87,11 +87,7 @@ export class GameBoardComponent implements AfterViewInit {
 
   validateSelectedChengyu(): void {
     if (this.isSelectedChengyuCharsCorrect()) {
-      if (this.isLastChengyu()) {
-        // TODO
-      } else {
-        this.handleCorrectChengyu();
-      }
+      this.handleCorrectChengyu();
     } else {
       this.handleIncorrectChengyu();
     }
@@ -143,11 +139,11 @@ export class GameBoardComponent implements AfterViewInit {
   }
 
   selectNextChengyu(): void {
+    this.resetSelectedChengyu();
+
     if (this.isLastChengyu()) {
       return;
     }
-
-    this.resetSelectedChengyu();
 
     this.currentChengyuIndex = this.currentChengyuIndex + 1;
     const currentChengyu = this.chengyus[this.currentChengyuIndex];

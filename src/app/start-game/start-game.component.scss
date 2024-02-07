@@ -8,7 +8,8 @@
   color: var(--app-color-dark);
   font-family: var(--app-hanzi-font-family);
   font-size: 9rem;
-  letter-spacing: -2rem;
+  letter-spacing: -1.5rem;
+  margin-right: 1.5rem; // To compensate for the letter spacing adjustments
   margin-top: -2rem;
   text-align: center;
 }

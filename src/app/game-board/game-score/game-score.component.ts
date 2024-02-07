@@ -22,8 +22,7 @@ import {AsyncPipe, DecimalPipe, NgIf} from "@angular/common";
   standalone: true,
   imports: [
     NgIf,
-    AsyncPipe,
-    DecimalPipe
+    AsyncPipe
   ],
   animations: [],
   templateUrl: './game-score.component.html',
@@ -66,7 +65,7 @@ export class GameScoreComponent implements OnDestroy {
 
     return interval(animationStepDuration).pipe(
       take(animationSteps),
-      map(step => previousScore + (step * (currentScore - previousScore) / animationSteps)),
+      map(step => Math.round(previousScore + (step * (currentScore - previousScore) / animationSteps))),
       endWith(currentScore)
     );
   }

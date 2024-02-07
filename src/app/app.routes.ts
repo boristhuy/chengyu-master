@@ -10,5 +10,10 @@ export const routes: Routes = [
   {
     path: 'game',
     component: GameBoardComponent
+  },
+  {
+    path: '',
+    redirectTo: 'start',
+    pathMatch: 'full'
   }
 ];
