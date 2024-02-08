@@ -1,6 +1,6 @@
-<div class="game-board-container">
+<div class="game-board-container" @gameLoad>
   <div class="game-score-container">
-    <chengyu-game-score [score]="score"></chengyu-game-score>
+    <app-game-score></app-game-score>
   </div>
 
   <div class="game-chengyu-container"
@@ -9,61 +9,57 @@
        [@incorrectChengyu]="incorrectChengyu ? 'incorrect' : ''"
        (@incorrectChengyu.done)="onIncorrectChengyuAnimationDone()"
        [class.chengyu-correct]="correctChengyu">
-    <span *ngFor="let char of selectedChengyuChars" @charSelected>
-      {{ char.chengyuChar }}
+    <span *ngFor="let char of selectedChengyuChars$ | async" @charSelected>
+      {{ char }}
     </span>
   </div>
 
   <div class="game-wheel-container container">
-    <div class="row g-0 position-relative h-100 z-1">
+    <div class="row g-0 position-relative h-100 z-1" *ngIf="currentChengyu$ | async as shuffledChengyu">
       <div class="col-12 d-flex justify-content-center align-items-center">
-        <input type="checkbox" class="btn-check" id="btn-check-1" autocomplete="off"
-               hotkey="ArrowUp"
-               (click)="selectChengyuChar(shuffledChengyu[0], 'checkbox1', $event)">
-        <label id="checkbox1" class="char " for="btn-check-1"
-               [class.char-checked]="checkboxes.checkbox1"
-               [class.char-unchecked]="!checkboxes.checkbox1">
-          {{ shuffledChengyu[0] }}
-        </label>
+        <app-hanzi
+          [id]="'checkbox1'"
+          [checked]="checkboxes.checkbox1"
+          [hotkey]="'ArrowUp'"
+          [value]="shuffledChengyu[0]"
+          (clicked)="selectChengyuChar($event)"
+        ></app-hanzi>
       </div>
       <div class="col-6 d-flex justify-content-start align-items-center">
-        <input type="checkbox" class="btn-check" id="btn-check-2" autocomplete="off"
-               hotkey="ArrowLeft"
-               (click)="selectChengyuChar(shuffledChengyu[1], 'checkbox2', $event)">
-        <label id="checkbox2" class="char" for="btn-check-2"
-               [class.char-checked]="checkboxes.checkbox2"
-               [class.char-unchecked]="!checkboxes.checkbox2">
-          {{ shuffledChengyu[1] }}
-        </label>
+        <app-hanzi
+          [id]="'checkbox2'"
+          [checked]="checkboxes.checkbox2"
+          [hotkey]="'ArrowLeft'"
+          [value]="shuffledChengyu[1]"
+          (clicked)="selectChengyuChar($event)"
+        ></app-hanzi>
       </div>
       <div class="col-6 d-flex justify-content-end align-items-center">
-        <input type="checkbox" class="btn-check" id="btn-check-3" autocomplete="off"
-               hotkey="ArrowRight"
-               (click)="selectChengyuChar(shuffledChengyu[2], 'checkbox3', $event)">
-        <label id="checkbox3" class="char" for="btn-check-3"
-               [class.char-checked]="checkboxes.checkbox3"
-               [class.char-unchecked]="!checkboxes.checkbox3">
-          {{ shuffledChengyu[2] }}
-        </label>
+        <app-hanzi
+          [id]="'checkbox3'"
+          [checked]="checkboxes.checkbox3"
+          [hotkey]="'ArrowRight'"
+          [value]="shuffledChengyu[2]"
+          (clicked)="selectChengyuChar($event)"
+        ></app-hanzi>
       </div>
       <div class="col-12 d-flex justify-content-center align-items-center">
-        <input type="checkbox" class="btn-check" id="btn-check-4" autocomplete="off"
-               hotkey="ArrowDown"
-               (click)="selectChengyuChar(shuffledChengyu[3], 'checkbox4', $event)">
-        <label id="checkbox4" class="char" for="btn-check-4"
-               [class.char-checked]="checkboxes.checkbox4"
-               [class.char-unchecked]="!checkboxes.checkbox4">
-          {{ shuffledChengyu[3] }}
-        </label>
+        <app-hanzi
+          [id]="'checkbox4'"
+          [checked]="checkboxes.checkbox4"
+          [hotkey]="'ArrowDown'"
+          [value]="shuffledChengyu[3]"
+          (clicked)="selectChengyuChar($event)"
+        ></app-hanzi>
       </div>
     </div>
 
     <div class="game-canvas-container">
-      <chengyu-game-canvas #gameCanvas></chengyu-game-canvas>
+      <app-game-canvas></app-game-canvas>
     </div>
 
     <div class="game-timer-container">
-      <chengyu-game-timer (timerEnded)="onGameTimerEnded()"></chengyu-game-timer>
+      <app-game-timer></app-game-timer>
     </div>
   </div>
 

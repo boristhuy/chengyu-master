@@ -1,6 +1,5 @@
-import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {
-  BehaviorSubject,
   delay,
   endWith,
   finalize,
@@ -15,10 +14,11 @@ import {
   take,
   tap
 } from "rxjs";
-import {AsyncPipe, DecimalPipe, NgIf} from "@angular/common";
+import {AsyncPipe, NgIf} from "@angular/common";
+import {GameScoreService} from "./game-score.service";
 
 @Component({
-  selector: 'chengyu-game-score',
+  selector: 'app-game-score',
   standalone: true,
   imports: [
     NgIf,
@@ -29,33 +29,19 @@ import {AsyncPipe, DecimalPipe, NgIf} from "@angular/common";
   styleUrl: './game-score.component.scss'
 })
 export class GameScoreComponent implements OnDestroy {
-  scoreSource$ = new BehaviorSubject<number>(0);
   scoreUpdated$ = new ReplaySubject<void>(1);
   scoreUpdatedSubscription!: Subscription;
   scoreDisplayed$: Observable<number>;
 
-  @Input() set score(value: number) {
-    this.scoreSource$.next(value);
-  }
-
-  @Output()
-  scoreUpdated = new EventEmitter<void>();
-
-  constructor() {
-    this.scoreDisplayed$ = this.scoreSource$.pipe(
+  constructor(private gameScoreService: GameScoreService) {
+    this.scoreDisplayed$ = this.gameScoreService.gameScore$.pipe(
       pairwise(),
       switchMap(([previousScore, currentScore]) => {
         return this.animateScoreDisplayed(previousScore, currentScore).pipe(
-          finalize(() => this.scoreUpdated$.next())
         )
       }),
       startWith(0),
     );
-
-    this.scoreUpdatedSubscription = this.scoreUpdated$.pipe(
-      delay(500),
-      tap(_ => this.scoreUpdated.next())
-    ).subscribe();
   }
 
   animateScoreDisplayed(previousScore: number, currentScore: number) {

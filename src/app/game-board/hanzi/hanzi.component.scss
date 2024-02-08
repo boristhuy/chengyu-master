@@ -1,0 +1,24 @@
+.char {
+  align-items: center;
+  border-radius: 50%;
+  display: flex;
+  font-family: var(--app-hanzi-font-family);
+  font-size: 2.5rem;
+  font-weight: 500 !important;
+  height: 5rem;
+  justify-content: center;
+  position: relative;
+  width: 5rem;
+  transition: border 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+}
+
+.char-unchecked {
+  border: 2.5px solid var(--app-color-primary) !important;
+  color: var(--app-color-dark) !important;
+}
+
+.char-checked {
+  background: var(--app-color-primary) !important;
+  box-shadow: inset 0 -5px 0 var(--app-color-primary-dark);
+  color: var(--app-color-light) !important;
+}

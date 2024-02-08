@@ -1,15 +1,21 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {GameCanvasComponent} from "./game-canvas/game-canvas.component";
-import {animate, keyframes, query, stagger, style, transition, trigger} from "@angular/animations";
 import {GameScoreComponent} from "./game-score/game-score.component";
 import {GameTimerComponent} from "./game-timer/game-timer.component";
 import {gameBoardAnimation} from "./game-board.animation";
+import {ChengyuCharElement, GameBoardService} from "./game-board.service";
+import {map, Observable, Subject, takeUntil, tap} from "rxjs";
+import {HanziComponent} from "./hanzi/hanzi.component";
 import {HotkeyDirective} from "./hotkey.directive";
+import {GameTimerService} from "./game-timer/game-timer.service";
+import {GameScoreService} from "./game-score/game-score.service";
+import {Router} from "@angular/router";
+
 
 @Component({
-  selector: 'chengyu-game-board',
+  selector: 'app-game-board',
   standalone: true,
   animations: gameBoardAnimation,
   imports: [
@@ -18,30 +24,22 @@ import {HotkeyDirective} from "./hotkey.directive";
     GameCanvasComponent,
     GameScoreComponent,
     GameTimerComponent,
-    HotkeyDirective,
     ReactiveFormsModule,
+    HanziComponent,
+    HotkeyDirective,
   ],
+  providers: [GameBoardService, GameScoreService, GameTimerService],
   templateUrl: './game-board.component.html',
   styleUrl: './game-board.component.scss'
 })
-export class GameBoardComponent implements AfterViewInit {
+export class GameBoardComponent implements AfterViewInit, OnDestroy {
+  private destroySubject = new Subject<void>();
 
-  chengyus = [
-    "学而不厌",
-    "温故知新",
-    "好学不倦",
-    "勤学好问",
-    "学无止境",
-  ];
-
-  currentChengyuIndex = -1;
-  shuffledChengyu = '';
-  selectedChengyuChars: ChengyuCharElement[] = [];
+  currentChengyu$!: Observable<string>;
+  selectedChengyuChars$!: Observable<string[]>;
 
   correctChengyu = false;
   incorrectChengyu = false;
-
-  score = 0;
 
   checkboxes = {
     checkbox1: false,
@@ -50,123 +48,49 @@ export class GameBoardComponent implements AfterViewInit {
     checkbox4: false
   };
 
-  @ViewChild('gameCanvas')
+  @ViewChild(GameCanvasComponent)
   canvasComponent!: GameCanvasComponent;
 
-  @ViewChild(GameTimerComponent, {static: false})
-  timerComponent!: GameTimerComponent;
+  constructor(private gameBoardService: GameBoardService, private router: Router) {
+    this.currentChengyu$ = this.gameBoardService.currentChengyu$;
 
-  ngAfterViewInit(): void {
-    Promise.resolve().then(() => (this.selectNextChengyu()));
+    this.selectedChengyuChars$ = this.gameBoardService.selectedChengyuChars$.pipe(
+      tap(chengyuChars => {
+        this.updateAllCheckboxes(chengyuChars);
+        this.redrawLinesBetweenChengyuChars(chengyuChars);
+      }),
+      map(chengyuChars => chengyuChars.map(c => c.chengyuChar))
+    );
+
+    this.gameBoardService.isValidChengyu$.pipe(
+      takeUntil(this.destroySubject),
+      tap(validChengyu => {
+        if (validChengyu) {
+          this.handleCorrectChengyu();
+        } else {
+          this.handleIncorrectChengyu();
+        }
+      })
+    ).subscribe();
   }
 
-  selectChengyuChar(chengyuChar: string, elementId: string, event: Event) {
-    event.preventDefault();
+  ngAfterViewInit(): void {
+    Promise.resolve().then(() => (this.gameBoardService.getNextChengyu()));
+  }
 
-    const existingChengyuCharIndex = this.selectedChengyuChars.findIndex(val => val.elementId === elementId);
-    if (existingChengyuCharIndex === -1) {
-      this.selectedChengyuChars.push({chengyuChar, elementId});
-      // @ts-ignore
-      this.checkboxes[elementId] = true;
-      this.redrawLines();
-    } else if (existingChengyuCharIndex === this.selectedChengyuChars.length - 1) {
-      this.selectedChengyuChars.pop();
-      // @ts-ignore
-      this.checkboxes[elementId] = false;
-      this.redrawLines();
-    }
-
-    if (this.selectedChengyuChars.length === 4) {
-      setTimeout(() => {
-        this.validateSelectedChengyu();
-      }, 500)
-    }
+  selectChengyuChar(chengyuChar: ChengyuCharElement) {
+    this.gameBoardService.selectChengyuChar(chengyuChar);
   }
 
   skipChengyu() {
-    this.selectNextChengyu();
-  }
-
-  onGameTimerEnded() {
-    alert("You lost")
-  }
-
-  validateSelectedChengyu(): void {
-    if (this.isSelectedChengyuCharsCorrect()) {
-      this.handleCorrectChengyu();
-    } else {
-      this.handleIncorrectChengyu();
-    }
-  }
-
-  redrawLines(): void {
-    this.canvasComponent?.clearCanvas();
-
-    if (this.selectedChengyuChars.length <= 1) {
-      return;
-    }
-
-    const elementIds = this.selectedChengyuChars.map(v => v.elementId);
-    for (let i = 0; i < elementIds.length - 1; i++) {
-      const startElement = document.getElementById(elementIds[i]);
-      const endElement = document.getElementById(elementIds[i + 1]);
-
-      if (startElement && endElement) {
-        const startRect = startElement.getBoundingClientRect();
-        const endRect = endElement.getBoundingClientRect();
-
-        // Calculate the center positions
-        const startX = startRect.left + startRect.width / 2;
-        const startY = startRect.top + startRect.height / 2;
-        const endX = endRect.left + endRect.width / 2;
-        const endY = endRect.top + endRect.height / 2;
-
-        // Draw line on the canvas
-        this.canvasComponent.drawLine(startX, startY, endX, endY);
-      }
-    }
-  }
-
-  isSelectedChengyuCharsCorrect(): boolean {
-    const currentChengyu = this.chengyus[this.currentChengyuIndex];
-    return currentChengyu === this.selectedChengyuChars
-      .map(char => char.chengyuChar)
-      .join('');
-  }
-
-  handleCorrectChengyu(): void {
-    this.timerComponent.stopTimer();
-    this.computeScore();
-    this.correctChengyu = true;
-  }
-
-  handleIncorrectChengyu(): void {
-    this.incorrectChengyu = true;
-  }
-
-  selectNextChengyu(): void {
-    this.resetSelectedChengyu();
-
-    if (this.isLastChengyu()) {
-      return;
-    }
-
-    this.currentChengyuIndex = this.currentChengyuIndex + 1;
-    const currentChengyu = this.chengyus[this.currentChengyuIndex];
-    this.shuffledChengyu = shuffle(currentChengyu);
-
-    this.timerComponent.startTimer();
-  }
-
-  computeTimeBonus(remainingTime: number): number {
-    return remainingTime * 10;
+    this.gameBoardService.getNextChengyu();
   }
 
   onCorrectChengyuAnimationDone() {
     // TODO fix animation done callback being triggered on first load
     if (this.correctChengyu) {
       this.correctChengyu = false;
-      this.selectNextChengyu();
+      this.gameBoardService.getNextChengyu();
     }
   }
 
@@ -174,49 +98,46 @@ export class GameBoardComponent implements AfterViewInit {
     // TODO fix animation done callback being triggered on first load
     if (this.incorrectChengyu) {
       this.incorrectChengyu = false;
-      this.resetSelectedChengyu();
+      this.gameBoardService.clearSelectedChengyuChars();
     }
   }
 
-  computeScore(): void {
-    const basePoint = 100;
-
-    const remainingTime = this.timerComponent.getRemainingTime();
-    const timeBonus = this.computeTimeBonus(remainingTime);
-
-    this.score += basePoint + timeBonus;
+  private handleCorrectChengyu(): void {
+    this.correctChengyu = true;
   }
 
-  resetSelectedChengyu() {
-    this.selectedChengyuChars = [];
-    this.redrawLines();
-    this.resetCheckboxes();
+  private handleIncorrectChengyu(): void {
+    this.incorrectChengyu = true;
   }
 
-  resetCheckboxes() {
-    Object.keys(this.checkboxes).forEach(key => {
-      // @ts-ignore
-      this.checkboxes[key] = false;
-    });
+  private redrawLinesBetweenChengyuChars(chengyuChars: ChengyuCharElement[]): void {
+    this.canvasComponent?.clearCanvas();
+
+    if (chengyuChars.length <= 1) {
+      return;
+    }
+
+    const elementIds = chengyuChars.map(v => v.elementId);
+    for (let i = 0; i < elementIds.length - 1; i++) {
+      const startElement = document.getElementById(elementIds[i]);
+      const endElement = document.getElementById(elementIds[i + 1]);
+
+      if (startElement && endElement) {
+        this.canvasComponent.drawLine(startElement, endElement);
+      }
+    }
   }
 
-  isLastChengyu() {
-    return this.currentChengyuIndex === this.chengyus.length - 1;
+  private updateAllCheckboxes(selectedChars: ChengyuCharElement[]) {
+    // @ts-ignore
+    Object.keys(this.checkboxes).forEach(key => this.checkboxes[key] = false);
+
+    // @ts-ignore
+    selectedChars.forEach(char => this.checkboxes[char.elementId] = true);
+  }
+
+  ngOnDestroy(): void {
+    this.destroySubject.next();
+    this.destroySubject.complete();
   }
 }
-
-interface ChengyuCharElement {
-  chengyuChar: string;
-  elementId: string;
-}
-
-function shuffle(input: string): string {
-  let characters = input.split('');
-  for (let i = characters.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [characters[i], characters[j]] = [characters[j], characters[i]];
-  }
-
-  return characters.join('');
-}
-

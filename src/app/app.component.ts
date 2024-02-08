@@ -1,7 +1,7 @@
-import {Component, HostListener} from '@angular/core';
+import {Component, HostListener, Inject, OnDestroy, OnInit} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
-import {AsyncPipe, NgStyle} from "@angular/common";
-import {Observable} from "rxjs";
+import {AsyncPipe, DOCUMENT, NgStyle} from "@angular/common";
+import {Subscription} from "rxjs";
 import {ScalingService} from "./common/scaling.service";
 
 @Component({
@@ -11,13 +11,10 @@ import {ScalingService} from "./common/scaling.service";
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
-  scale$: Observable<number>;
+export class AppComponent implements OnInit, OnDestroy {
+  private scaleSubscription!: Subscription;
 
-  constructor(private scalingService: ScalingService) {
-    this.scale$ = this.scalingService.getScale();
-
-    this.checkScale();
+  constructor(private scalingService: ScalingService, @Inject(DOCUMENT) private document: Document) {
   }
 
   @HostListener('window:resize')
@@ -25,12 +22,28 @@ export class AppComponent {
     this.checkScale();
   }
 
+  ngOnInit() {
+    this.checkScale();
+
+    this.scaleSubscription = this.scalingService.getScale().subscribe(scale => {
+      this.document.body.style.setProperty('--app-scale', `${scale}`);
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.scaleSubscription) {
+      this.scaleSubscription.unsubscribe();
+    }
+
+    this.document.body.style.removeProperty('--app-scale');
+  }
+
   checkScale() {
     const height = window.innerHeight;
     let newScale: number;
 
     if (height < 800) {
-      newScale = 0.8;
+      newScale = 0.85;
     } else {
       newScale = 1;
     }

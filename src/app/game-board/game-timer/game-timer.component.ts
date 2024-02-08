@@ -1,68 +1,39 @@
-import {Component, EventEmitter, OnDestroy, Output} from '@angular/core';
-import {finalize, Subscription, takeWhile, tap, timer} from "rxjs";
+import {Component, OnDestroy} from '@angular/core';
+import {Subscription, tap} from "rxjs";
+import {GameTimerService} from "./game-timer.service";
 
 @Component({
-  selector: 'chengyu-game-timer',
+  selector: 'app-game-timer',
   standalone: true,
   imports: [],
   templateUrl: './game-timer.component.html',
   styleUrl: './game-timer.component.scss'
 })
 export class GameTimerComponent implements OnDestroy {
-  timerInitialTime = 30;
-  timerRemainingTime = this.timerInitialTime;
-
-  timerSubscription!: Subscription;
-
-  @Output()
-  timerEnded = new EventEmitter<void>();
-
   strokeDashoffset = 0;
   strokeTransitionEnabled = false;
 
-  startTimer() {
-    this.strokeTransitionEnabled = false;
-    this.strokeDashoffset = 0;
+  timerSubscription!: Subscription;
 
-    setTimeout(() => {
-      this.strokeTransitionEnabled = true;
-      this.iniTimer();
-    }, 100);
-  }
+  constructor(private gameTimerService: GameTimerService) {
+    this.timerSubscription = this.gameTimerService.timerValue$.pipe(
+      tap(timerData => {
+        const {timeLeft, duration} = timerData;
 
-  stopTimer() {
-    if (this.timerSubscription) {
-      this.timerSubscription.unsubscribe();
-    }
-  }
-
-  getRemainingTime(): number {
-    return this.timerRemainingTime;
-  }
-
-  iniTimer() {
-    this.timerRemainingTime = this.timerInitialTime;
-
-    if (this.timerSubscription) {
-      this.timerSubscription.unsubscribe();
-    }
-
-    this.timerSubscription = timer(0, 1000).pipe(
-      takeWhile(() => this.timerRemainingTime > 0, true),
-      tap(() => {
-        this.timerRemainingTime--;
-        this.updateStrokeDashoffset();
-
-        if (this.timerRemainingTime < 0) {
-          this.timerEnded.next();
+        if (timeLeft == duration) {
+          this.strokeTransitionEnabled = false;
+          this.strokeDashoffset = 0;
+          setTimeout(() => this.strokeTransitionEnabled = true, 10);
         }
+
+        this.updateStrokeDashoffset(timeLeft, duration);
       })
     ).subscribe();
   }
 
-  updateStrokeDashoffset() {
+  updateStrokeDashoffset(timeLeft: number, duration: number) {
     const pathLength = 923.63;
-    const progress = 1 - this.timerRemainingTime / this.timerInitialTime;
+    const progress = 1 - (timeLeft / duration);
     const offset = Math.min(pathLength, Math.abs(progress * pathLength));
 
     this.strokeDashoffset = -offset;

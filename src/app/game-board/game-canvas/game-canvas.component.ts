@@ -3,7 +3,7 @@ import {ScalingService} from "../../common/scaling.service";
 import {Subscription, tap} from "rxjs";
 
 @Component({
-  selector: 'chengyu-game-canvas',
+  selector: 'app-game-canvas',
   standalone: true,
   imports: [],
   templateUrl: './game-canvas.component.html',
@@ -40,13 +40,22 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     this.scaleSubscription.unsubscribe();
   }
 
-  drawLine(startX: number, startY: number, endX: number, endY: number): void {
-    const rect = this.canvasElement.nativeElement.getBoundingClientRect();
+  drawLine(startElement: HTMLElement, endElement: HTMLElement): void {
+    const startElementRect = startElement.getBoundingClientRect();
+    const endElementRect = endElement.getBoundingClientRect();
 
-    const canvasStartX = (startX - rect.left) / this.scale;
-    const canvasStartY = (startY - rect.top) / this.scale;
-    const canvasEndX = (endX - rect.left) / this.scale;
-    const canvasEndY = (endY - rect.top) / this.scale;
+    // Calculate the center positions
+    const startX = startElementRect.left + startElementRect.width / 2;
+    const startY = startElementRect.top + startElementRect.height / 2;
+    const endX = endElementRect.left + endElementRect.width / 2;
+    const endY = endElementRect.top + endElementRect.height / 2;
+
+    const canvasRect = this.canvasElement.nativeElement.getBoundingClientRect();
+
+    const canvasStartX = (startX - canvasRect.left) / this.scale;
+    const canvasStartY = (startY - canvasRect.top) / this.scale;
+    const canvasEndX = (endX - canvasRect.left) / this.scale;
+    const canvasEndY = (endY - canvasRect.top) / this.scale;
 
     this.ctx.beginPath();
     this.ctx.strokeStyle = '#f6c48e';

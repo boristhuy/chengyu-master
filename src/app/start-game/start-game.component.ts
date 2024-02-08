@@ -3,7 +3,7 @@ import {Router, RouterLink} from "@angular/router";
 import {AsyncPipe, DecimalPipe} from "@angular/common";
 
 @Component({
-  selector: 'chengyu-start-game',
+  selector: 'app-start-game',
   standalone: true,
   imports: [
     RouterLink,

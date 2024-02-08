@@ -9,7 +9,8 @@ export const routes: Routes = [
   },
   {
     path: 'game',
-    component: GameBoardComponent
+    component: GameBoardComponent,
+    data: {reloadOnSameRoute: true}
   },
   {
     path: '',

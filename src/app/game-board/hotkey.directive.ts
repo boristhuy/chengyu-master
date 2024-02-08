@@ -1,4 +1,4 @@
-import {Directive, ElementRef, HostListener} from '@angular/core';
+import {Directive, ElementRef, HostListener, Input} from '@angular/core';
 
 @Directive({
   selector: '[hotkey]',
@@ -6,14 +6,16 @@ import {Directive, ElementRef, HostListener} from '@angular/core';
 })
 export class HotkeyDirective {
 
+  @Input()
+  hotkey!: string;
+
   constructor(private el: ElementRef) {
   }
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    const hotkey = this.el.nativeElement.getAttribute('hotkey');
-    if (hotkey) {
-      if (event.code === hotkey.trim()) {
+    if (this.hotkey) {
+      if (event.code === this.hotkey.trim()) {
         event.preventDefault();
         this.el.nativeElement.click();
       }
