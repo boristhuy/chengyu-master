@@ -1,50 +1,81 @@
-.chengyu-container {
+.game-board-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: var(--app-layout-padding-distinct);
+  height: 100%;
+}
+
+.game-score-container {
+  margin-bottom: var(--app-layout-margin-distinct);
+}
+
+.game-chengyu-container {
   color: var(--app-color-dark);
   display: flex;
   justify-content: center;
   align-items: center;
   font-family: var(--app-hanzi-font-family);
-  font-size: 4.5rem;
+  font-size: 5rem;
   font-weight: 500 !important;
+  margin-bottom: var(--app-layout-margin-distinct);
   min-height: 125px;
-  margin: 1rem 0;
   position: relative;
   width: 100%;
 }
 
-.char-container {
+.chengyu-correct {
+  color: var(--app-color-primary);
+}
+
+.game-wheel-container {
   border-radius: 50%;
-  padding: 1.75rem;
+  margin-bottom: calc(var(--app-layout-margin-distinct) + 1rem);
+  padding: var(--app-layout-padding-distinct);
   position: relative;
   height: 300px;
   width: 300px;
+
+  .char {
+    align-items: center;
+    border-radius: 50%;
+    display: flex;
+    font-family: var(--app-hanzi-font-family);
+    font-size: 2.5rem;
+    font-weight: 500 !important;
+    height: 5rem;
+    justify-content: center;
+    position: relative;
+    width: 5rem;
+    transition: border 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+  }
+
+  .char-unchecked {
+    border: 2px solid var(--app-color-primary) !important;
+    color: var(--app-color-dark) !important;
+  }
+
+  .char-checked {
+    background: var(--app-color-primary) !important;
+    box-shadow: inset 0 -5px 0 var(--app-color-primary-dark);
+    color: var(--app-color-light) !important;
+  }
 }
 
-.char {
-  align-items: center;
-  border-radius: 50%;
+.game-canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.game-timer-container {
+  position: absolute;
+  top: -2.5px;
+  left: -2.5px;
+}
+
+.game-action-container {
   display: flex;
-  font-family: var(--app-hanzi-font-family);
-  font-size: 2.5rem;
-  font-weight: 500 !important;
-  height: 72px;
   justify-content: center;
-  position: relative;
-  width: 72px;
-  transition: border 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
-}
-
-.char-unchecked {
-  border: 2px solid var(--app-color-primary) !important;
-  color: var(--app-color-dark) !important;
-}
-
-.char-checked {
-  background: var(--app-color-primary) !important;
-  box-shadow: inset 0 -5px 0 var(--app-color-primary-dark);
-  color: var(--app-color-light) !important;
-}
-
-.chengyu-correct {
-  color: var(--app-color-primary);
 }

@@ -1,62 +1,75 @@
-<chengyu-game-score [score]="score"></chengyu-game-score>
+<div class="game-board-container">
+  <div class="game-score-container">
+    <chengyu-game-score [score]="score"></chengyu-game-score>
+  </div>
 
-<div class="chengyu-container"
-     [@correctChengyu]="correctChengyu ? 'correct' : 'void'"
-     (@correctChengyu.done)="onCorrectChengyuAnimationDone()"
-     [@incorrectChengyu]="incorrectChengyu ? 'incorrect' : ''"
-     (@incorrectChengyu.done)="onIncorrectChengyuAnimationDone()"
-     [class.chengyu-correct]="correctChengyu">
+  <div class="game-chengyu-container"
+       [@correctChengyu]="correctChengyu ? 'correct' : ''"
+       (@correctChengyu.done)="onCorrectChengyuAnimationDone()"
+       [@incorrectChengyu]="incorrectChengyu ? 'incorrect' : ''"
+       (@incorrectChengyu.done)="onIncorrectChengyuAnimationDone()"
+       [class.chengyu-correct]="correctChengyu">
     <span *ngFor="let char of selectedChengyuChars" @charSelected>
       {{ char.chengyuChar }}
     </span>
-</div>
-
-<div class="char-container container">
-  <div class="row g-0 position-relative h-100 z-1">
-    <div class="col-12 d-flex justify-content-center align-items-center">
-      <input type="checkbox" class="btn-check" id="btn-check-1" autocomplete="off"
-             hotkey="ArrowUp"
-             (click)="selectChengyuChar(shuffledChengyu[0], 'checkbox1', $event)">
-      <label id="checkbox1" class="char " for="btn-check-1"
-             [class.char-checked]="checkboxes.checkbox1"
-             [class.char-unchecked]="!checkboxes.checkbox1">
-        {{ shuffledChengyu[0] }}
-      </label>
-    </div>
-    <div class="col-6 d-flex justify-content-start align-items-center">
-      <input type="checkbox" class="btn-check" id="btn-check-2" autocomplete="off"
-             hotkey="ArrowLeft"
-             (click)="selectChengyuChar(shuffledChengyu[1], 'checkbox2', $event)">
-      <label id="checkbox2" class="char" for="btn-check-2"
-             [class.char-checked]="checkboxes.checkbox2"
-             [class.char-unchecked]="!checkboxes.checkbox2">
-        {{ shuffledChengyu[1] }}
-      </label>
-    </div>
-    <div class="col-6 d-flex justify-content-end align-items-center">
-      <input type="checkbox" class="btn-check" id="btn-check-3" autocomplete="off"
-             hotkey="ArrowRight"
-             (click)="selectChengyuChar(shuffledChengyu[2], 'checkbox3', $event)">
-      <label id="checkbox3" class="char" for="btn-check-3"
-             [class.char-checked]="checkboxes.checkbox3"
-             [class.char-unchecked]="!checkboxes.checkbox3">
-        {{ shuffledChengyu[2] }}
-      </label>
-    </div>
-    <div class="col-12 d-flex justify-content-center align-items-center">
-      <input type="checkbox" class="btn-check" id="btn-check-4" autocomplete="off"
-             hotkey="ArrowDown"
-             (click)="selectChengyuChar(shuffledChengyu[3], 'checkbox4', $event)">
-      <label id="checkbox4" class="char" for="btn-check-4"
-             [class.char-checked]="checkboxes.checkbox4"
-             [class.char-unchecked]="!checkboxes.checkbox4">
-        {{ shuffledChengyu[3] }}
-      </label>
-    </div>
-  </div>
-  <div class="position-absolute top-0 start-0 z-0">
-    <chengyu-game-canvas #gameCanvas></chengyu-game-canvas>
   </div>
 
-  <chengyu-game-timer (timerEnded)="onGameTimerEnded()"></chengyu-game-timer>
+  <div class="game-wheel-container container">
+    <div class="row g-0 position-relative h-100 z-1">
+      <div class="col-12 d-flex justify-content-center align-items-center">
+        <input type="checkbox" class="btn-check" id="btn-check-1" autocomplete="off"
+               hotkey="ArrowUp"
+               (click)="selectChengyuChar(shuffledChengyu[0], 'checkbox1', $event)">
+        <label id="checkbox1" class="char " for="btn-check-1"
+               [class.char-checked]="checkboxes.checkbox1"
+               [class.char-unchecked]="!checkboxes.checkbox1">
+          {{ shuffledChengyu[0] }}
+        </label>
+      </div>
+      <div class="col-6 d-flex justify-content-start align-items-center">
+        <input type="checkbox" class="btn-check" id="btn-check-2" autocomplete="off"
+               hotkey="ArrowLeft"
+               (click)="selectChengyuChar(shuffledChengyu[1], 'checkbox2', $event)">
+        <label id="checkbox2" class="char" for="btn-check-2"
+               [class.char-checked]="checkboxes.checkbox2"
+               [class.char-unchecked]="!checkboxes.checkbox2">
+          {{ shuffledChengyu[1] }}
+        </label>
+      </div>
+      <div class="col-6 d-flex justify-content-end align-items-center">
+        <input type="checkbox" class="btn-check" id="btn-check-3" autocomplete="off"
+               hotkey="ArrowRight"
+               (click)="selectChengyuChar(shuffledChengyu[2], 'checkbox3', $event)">
+        <label id="checkbox3" class="char" for="btn-check-3"
+               [class.char-checked]="checkboxes.checkbox3"
+               [class.char-unchecked]="!checkboxes.checkbox3">
+          {{ shuffledChengyu[2] }}
+        </label>
+      </div>
+      <div class="col-12 d-flex justify-content-center align-items-center">
+        <input type="checkbox" class="btn-check" id="btn-check-4" autocomplete="off"
+               hotkey="ArrowDown"
+               (click)="selectChengyuChar(shuffledChengyu[3], 'checkbox4', $event)">
+        <label id="checkbox4" class="char" for="btn-check-4"
+               [class.char-checked]="checkboxes.checkbox4"
+               [class.char-unchecked]="!checkboxes.checkbox4">
+          {{ shuffledChengyu[3] }}
+        </label>
+      </div>
+    </div>
+
+    <div class="game-canvas-container">
+      <chengyu-game-canvas #gameCanvas></chengyu-game-canvas>
+    </div>
+
+    <div class="game-timer-container">
+      <chengyu-game-timer (timerEnded)="onGameTimerEnded()"></chengyu-game-timer>
+    </div>
+  </div>
+
+  <div class="game-action-container">
+    <button class="app-button app-button-secondary" (click)="skipChengyu()">
+      Skip
+    </button>
+  </div>
 </div>

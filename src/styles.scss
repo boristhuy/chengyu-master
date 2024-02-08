@@ -13,20 +13,17 @@ body {
   --app-color-dark: #091017;
   --app-color-light: #fefffe;
 
+  --app-color-secondary: #afe6d3;
+  --app-color-secondary-dark: #9ecfbe;
+
   --app-hanzi-font-family: 'Ma Shan Zheng', cursive;
   --app-lato-font-family: 'Lato', sans-serif;
   --app-titan-font-family: 'Titan One', sans-serif;
-}
 
-.page-header {
-}
-
-.page-header-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
+  --app-layout-padding-related: 0.5rem;
+  --app-layout-padding-distinct: 1.5rem;
+  --app-layout-margin-related: 0.5rem;
+  --app-layout-margin-distinct: 1.5rem;
 }
 
 .page-main {
@@ -34,5 +31,45 @@ body {
   justify-content: center;
   height: 100%;
   overflow: hidden;
-  padding: 4rem 0;
+  padding: 3rem 0;
 }
+
+.app-button {
+  background: var(--app-button-background);
+  border: 0;
+  box-shadow: inset 0 -5px 0 var(--app-button-inset);
+  border-radius: 25px;
+  color: var(--app-color-light) !important;
+  display: flex;
+  justify-content: center;
+  font-family: var(--app-titan-font-family);
+  font-size: 1.25em;
+  line-height: 1.5;
+  padding: 1rem 2.5rem;
+  text-transform: uppercase;
+}
+
+.app-button-primary {
+  --app-button-background: var(--app-color-primary);
+  --app-button-background-hover: var(--app-color-primary-dark);
+  --app-button-inset: var(--app-color-primary-dark);
+}
+
+.app-button-secondary {
+  --app-button-background: var(--app-color-secondary);
+  --app-button-background-hover: var(--app-color-secondary-dark);
+  --app-button-inset: var(--app-color-secondary-dark);
+}
+
+.app-button:hover {
+  transform: scale(1.10);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.app-button:active {
+  background: var(--app-button-background-hover);
+  box-shadow: none;
+  transform: scale(0.90);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+

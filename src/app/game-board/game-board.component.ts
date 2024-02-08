@@ -83,8 +83,12 @@ export class GameBoardComponent implements AfterViewInit {
     }
   }
 
-  onGameTimerEnded() {
+  skipChengyu() {
     this.selectNextChengyu();
+  }
+
+  onGameTimerEnded() {
+    alert("You lost")
   }
 
   validateSelectedChengyu(): void {
