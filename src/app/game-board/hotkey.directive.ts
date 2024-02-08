@@ -13,7 +13,7 @@ export class HotkeyDirective {
   handleKeyboardEvent(event: KeyboardEvent) {
     const hotkey = this.el.nativeElement.getAttribute('hotkey');
     if (hotkey) {
-      if (event.key === hotkey.trim()) {
+      if (event.code === hotkey.trim()) {
         event.preventDefault();
         this.el.nativeElement.click();
       }

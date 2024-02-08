@@ -1,4 +1,6 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ScalingService} from "../../common/scaling.service";
+import {Subscription, tap} from "rxjs";
 
 @Component({
   selector: 'chengyu-game-canvas',
@@ -7,7 +9,7 @@ import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
   templateUrl: './game-canvas.component.html',
   styleUrl: './game-canvas.component.css'
 })
-export class GameCanvasComponent implements AfterViewInit {
+export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('canvasElement')
   canvasElement!: ElementRef<HTMLCanvasElement>;
@@ -17,17 +19,34 @@ export class GameCanvasComponent implements AfterViewInit {
   width = 300;
   height = 300;
 
+  scale!: number;
+  scaleSubscription!: Subscription;
+
+
+  constructor(private scalingService: ScalingService) {
+  }
+
+  ngOnInit() {
+    this.scaleSubscription = this.scalingService.getScale().pipe(
+      tap(scale => this.scale = scale)
+    ).subscribe();
+  }
+
   ngAfterViewInit(): void {
     this.ctx = this.canvasElement.nativeElement.getContext('2d')!;
+  }
+
+  ngOnDestroy() {
+    this.scaleSubscription.unsubscribe();
   }
 
   drawLine(startX: number, startY: number, endX: number, endY: number): void {
     const rect = this.canvasElement.nativeElement.getBoundingClientRect();
 
-    const canvasStartX = startX - rect.left;
-    const canvasStartY = startY - rect.top;
-    const canvasEndX = endX - rect.left;
-    const canvasEndY = endY - rect.top;
+    const canvasStartX = (startX - rect.left) / this.scale;
+    const canvasStartY = (startY - rect.top) / this.scale;
+    const canvasEndX = (endX - rect.left) / this.scale;
+    const canvasEndY = (endY - rect.top) / this.scale;
 
     this.ctx.beginPath();
     this.ctx.strokeStyle = '#f6c48e';

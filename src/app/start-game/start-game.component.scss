@@ -2,23 +2,32 @@
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  align-items: center;
+  height: 100%;
 }
 
 .start-game-title {
   color: var(--app-color-dark);
   font-family: var(--app-hanzi-font-family);
-  font-size: 9rem;
+  font-size: 10rem;
   letter-spacing: -1.5rem;
   margin-right: 1.5rem; // To compensate for the letter spacing adjustments
-  margin-top: -2rem;
+  margin-top: -3rem;
   text-align: center;
 }
 
 .start-game-subtitle {
   color: var(--app-color-dark);
   font-family: var(--app-titan-font-family);
-  font-size: 4rem;
-  margin-top: -3.5rem;
+  font-size: 5rem;
+  margin-top: -4rem;
   text-align: center;
   text-transform: uppercase;
+}
+
+.start-game-mode-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: auto;
 }

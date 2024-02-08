@@ -62,8 +62,8 @@ export class GameTimerComponent implements OnDestroy {
 
   updateStrokeDashoffset() {
     const pathLength = 923.63;
-
-    const offset = (1 - this.timerRemainingTime / this.timerInitialTime) * pathLength;
+    const progress = 1 - this.timerRemainingTime / this.timerInitialTime;
+    const offset = Math.min(pathLength, Math.abs(progress * pathLength));
 
     this.strokeDashoffset = -offset;
   }
