@@ -23,7 +23,7 @@ export class GameTimerComponent implements OnDestroy {
         if (timeLeft == duration) {
           this.strokeTransitionEnabled = false;
           this.strokeDashoffset = 0;
-          setTimeout(() => this.strokeTransitionEnabled = true, 10);
+          setTimeout(() => this.strokeTransitionEnabled = true, 100);
         }
 
         this.updateStrokeDashoffset(timeLeft, duration);

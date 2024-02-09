@@ -44,6 +44,7 @@ export class GameBoardService implements OnDestroy {
   constructor(private gameTimerService: GameTimerService, private gameScoreService: GameScoreService, private router: Router) {
     gameTimerService.timerExpired$.pipe(
       takeUntil(this.destroySubject),
+      delay(500),
       tap(() => this.gameTimerExpired())
     ).subscribe();
   }
