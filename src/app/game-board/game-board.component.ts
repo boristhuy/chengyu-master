@@ -1,17 +1,16 @@
-import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {GameCanvasComponent} from "./game-canvas/game-canvas.component";
 import {GameScoreComponent} from "./game-score/game-score.component";
 import {GameTimerComponent} from "./game-timer/game-timer.component";
 import {gameBoardAnimation} from "./game-board.animation";
-import {ChengyuCharElement, GameBoardService} from "./game-board.service";
+import {GameBoardService} from "./game-board.service";
 import {map, Observable, Subject, takeUntil, tap} from "rxjs";
-import {HanziComponent} from "./hanzi/hanzi.component";
+import {HanziComponent, HanziElement} from "./hanzi/hanzi.component";
 import {HotkeyDirective} from "./hotkey.directive";
 import {GameTimerService} from "./game-timer/game-timer.service";
 import {GameScoreService} from "./game-score/game-score.service";
-import {Router} from "@angular/router";
 
 
 @Component({
@@ -36,30 +35,26 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
   private destroySubject = new Subject<void>();
 
   currentChengyu$!: Observable<string>;
-  selectedChengyuChars$!: Observable<string[]>;
+  selectedHanzis$!: Observable<string[]>;
 
   correctChengyu = false;
   incorrectChengyu = false;
 
-  checkboxes = {
-    checkbox1: false,
-    checkbox2: false,
-    checkbox3: false,
-    checkbox4: false
-  };
+  @ViewChildren(HanziComponent)
+  hanziComponents!: QueryList<HanziComponent>;
 
   @ViewChild(GameCanvasComponent)
   canvasComponent!: GameCanvasComponent;
 
-  constructor(private gameBoardService: GameBoardService, private router: Router) {
+  constructor(private gameBoardService: GameBoardService) {
     this.currentChengyu$ = this.gameBoardService.currentChengyu$;
 
-    this.selectedChengyuChars$ = this.gameBoardService.selectedChengyuChars$.pipe(
-      tap(chengyuChars => {
-        this.updateAllCheckboxes(chengyuChars);
-        this.redrawLinesBetweenChengyuChars(chengyuChars);
+    this.selectedHanzis$ = this.gameBoardService.selectedHanzi$.pipe(
+      tap(selectedHanzis => {
+        this.refreshAllHanzis(selectedHanzis);
+        this.refreshAllLinesBetweenHanzis(selectedHanzis);
       }),
-      map(chengyuChars => chengyuChars.map(c => c.chengyuChar))
+      map(selectedHanzis => selectedHanzis.map(hanzi => hanzi.hanzi))
     );
 
     this.gameBoardService.isValidChengyu$.pipe(
@@ -78,8 +73,8 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
     Promise.resolve().then(() => (this.gameBoardService.getNextChengyu()));
   }
 
-  selectChengyuChar(chengyuChar: ChengyuCharElement) {
-    this.gameBoardService.selectChengyuChar(chengyuChar);
+  selectHanzi(hanzi: HanziElement) {
+    this.gameBoardService.selectHanzi(hanzi);
   }
 
   skipChengyu() {
@@ -98,7 +93,7 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
     // TODO fix animation done callback being triggered on first load
     if (this.incorrectChengyu) {
       this.incorrectChengyu = false;
-      this.gameBoardService.clearSelectedChengyuChars();
+      this.gameBoardService.clearSelectedHanzis();
     }
   }
 
@@ -110,14 +105,14 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
     this.incorrectChengyu = true;
   }
 
-  private redrawLinesBetweenChengyuChars(chengyuChars: ChengyuCharElement[]): void {
+  private refreshAllLinesBetweenHanzis(hanziElements: HanziElement[]): void {
     this.canvasComponent?.clearCanvas();
 
-    if (chengyuChars.length <= 1) {
+    if (hanziElements.length <= 1) {
       return;
     }
 
-    const elementIds = chengyuChars.map(v => v.elementId);
+    const elementIds = hanziElements.map(v => v.elementId);
     for (let i = 0; i < elementIds.length - 1; i++) {
       const startElement = document.getElementById(elementIds[i]);
       const endElement = document.getElementById(elementIds[i + 1]);
@@ -128,12 +123,15 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private updateAllCheckboxes(selectedChars: ChengyuCharElement[]) {
-    // @ts-ignore
-    Object.keys(this.checkboxes).forEach(key => this.checkboxes[key] = false);
+  private refreshAllHanzis(hanziElements: HanziElement[]) {
+    this.hanziComponents?.forEach(hanziComponent => hanziComponent.checked = false);
 
-    // @ts-ignore
-    selectedChars.forEach(char => this.checkboxes[char.elementId] = true);
+    hanziElements.forEach(hanziElement => {
+      const matchingComponent = this.hanziComponents.find(component => component.id === hanziElement.elementId);
+      if (matchingComponent) {
+        matchingComponent.checked = true;
+      }
+    });
   }
 
   ngOnDestroy(): void {

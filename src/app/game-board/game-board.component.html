@@ -9,47 +9,43 @@
        [@incorrectChengyu]="incorrectChengyu ? 'incorrect' : ''"
        (@incorrectChengyu.done)="onIncorrectChengyuAnimationDone()"
        [class.chengyu-correct]="correctChengyu">
-    <span *ngFor="let char of selectedChengyuChars$ | async" @charSelected>
+    <span *ngFor="let char of selectedHanzis$ | async" @charSelected>
       {{ char }}
     </span>
   </div>
 
   <div class="game-wheel-container container">
-    <div class="row g-0 position-relative h-100 z-1" *ngIf="currentChengyu$ | async as shuffledChengyu">
+    <div class="row g-0 position-relative h-100 z-1" *ngIf="currentChengyu$ | async as chengyu">
       <div class="col-12 d-flex justify-content-center align-items-center">
         <app-hanzi
-          [id]="'checkbox1'"
-          [checked]="checkboxes.checkbox1"
+          [id]="'hanzi-1'"
           [hotkey]="'ArrowUp'"
-          [value]="shuffledChengyu[0]"
-          (clicked)="selectChengyuChar($event)"
+          [value]="chengyu[0]"
+          (clicked)="selectHanzi($event)"
         ></app-hanzi>
       </div>
       <div class="col-6 d-flex justify-content-start align-items-center">
         <app-hanzi
-          [id]="'checkbox2'"
-          [checked]="checkboxes.checkbox2"
+          [id]="'hanzi-2'"
           [hotkey]="'ArrowLeft'"
-          [value]="shuffledChengyu[1]"
-          (clicked)="selectChengyuChar($event)"
+          [value]="chengyu[1]"
+          (clicked)="selectHanzi($event)"
         ></app-hanzi>
       </div>
       <div class="col-6 d-flex justify-content-end align-items-center">
         <app-hanzi
-          [id]="'checkbox3'"
-          [checked]="checkboxes.checkbox3"
+          [id]="'hanzi-3'"
           [hotkey]="'ArrowRight'"
-          [value]="shuffledChengyu[2]"
-          (clicked)="selectChengyuChar($event)"
+          [value]="chengyu[2]"
+          (clicked)="selectHanzi($event)"
         ></app-hanzi>
       </div>
       <div class="col-12 d-flex justify-content-center align-items-center">
         <app-hanzi
-          [id]="'checkbox4'"
-          [checked]="checkboxes.checkbox4"
+          [id]="'hanzi-4'"
           [hotkey]="'ArrowDown'"
-          [value]="shuffledChengyu[3]"
-          (clicked)="selectChengyuChar($event)"
+          [value]="chengyu[3]"
+          (clicked)="selectHanzi($event)"
         ></app-hanzi>
       </div>
     </div>

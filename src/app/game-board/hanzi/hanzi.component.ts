@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {HotkeyDirective} from "../hotkey.directive";
-import {ChengyuCharElement} from "../game-board.service";
 
 @Component({
   selector: 'app-hanzi',
@@ -16,19 +15,26 @@ export class HanziComponent {
   id!: string;
 
   @Input()
-  checked!: boolean;
-
-  @Input()
   hotkey!: string;
 
   @Input()
   value!: string;
 
   @Output()
-  clicked = new EventEmitter<ChengyuCharElement>();
+  clicked = new EventEmitter<HanziElement>();
+
+  checked: boolean = false;
 
   onClicked(event: Event) {
     event.preventDefault();
-    this.clicked.next({chengyuChar: this.value, elementId: this.id})
+
+    this.checked = !this.checked;
+
+    this.clicked.next({hanzi: this.value, elementId: this.id})
   }
+}
+
+export interface HanziElement {
+  hanzi: string;
+  elementId: string;
 }

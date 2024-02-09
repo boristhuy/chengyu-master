@@ -5,6 +5,7 @@ import {GameScoreService} from "./game-score/game-score.service";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {GameTimesUpComponent} from "./game-times-up/game-times-up.component";
 import {Router} from "@angular/router";
+import {HanziElement} from "./hanzi/hanzi.component";
 
 @Injectable()
 export class GameBoardService implements OnDestroy {
@@ -25,8 +26,8 @@ export class GameBoardService implements OnDestroy {
     tap(() => this.gameTimerService.startTimer(10))
   );
 
-  private selectedChengyuCharsSubject = new BehaviorSubject<ChengyuCharElement[]>([]);
-  selectedChengyuChars$ = this.selectedChengyuCharsSubject.asObservable();
+  private selectedHanzisSubject = new BehaviorSubject<HanziElement[]>([]);
+  selectedHanzi$ = this.selectedHanzisSubject.asObservable();
 
   private isValidChengyuSubject = new ReplaySubject(1);
   isValidChengyu$ = this.isValidChengyuSubject.asObservable().pipe(
@@ -50,7 +51,7 @@ export class GameBoardService implements OnDestroy {
   }
 
   getNextChengyu() {
-    this.clearSelectedChengyuChars();
+    this.clearSelectedHanzis();
 
     if (this.isLastChengyu()) {
       return;
@@ -60,13 +61,13 @@ export class GameBoardService implements OnDestroy {
     this.currentChengyuSubject.next(this.shuffleChengyu(this.chengyus[this.currentChengyuIndex]));
   }
 
-  selectChengyuChar(selectedChengyuChar: ChengyuCharElement) {
-    this._selectChengyuChar(selectedChengyuChar);
+  selectHanzi(hanzi: HanziElement) {
+    this._selectHanzi(hanzi);
     this.validateChengyu();
   }
 
-  clearSelectedChengyuChars() {
-    this.selectedChengyuCharsSubject.next([]);
+  clearSelectedHanzis() {
+    this.selectedHanzisSubject.next([]);
   }
 
   private gameTimerExpired() {
@@ -93,31 +94,31 @@ export class GameBoardService implements OnDestroy {
   }
 
   private validateChengyu() {
-    const currentChengyuChars = this.selectedChengyuCharsSubject.value;
-    if (currentChengyuChars.length === 4) {
+    const selectedHanzis = this.selectedHanzisSubject.value;
+    if (selectedHanzis.length === 4) {
       const validChengyu = this.isValidChengyu();
       this.isValidChengyuSubject.next(validChengyu);
     }
   }
 
-  private _selectChengyuChar(chengyuChar: ChengyuCharElement) {
-    let currentChengyuChars = this.selectedChengyuCharsSubject.value;
-    const existingChengyuCharIndex = currentChengyuChars.findIndex(c => c.elementId === chengyuChar.elementId);
+  private _selectHanzi(hanziElement: HanziElement) {
+    let selectedHanzis = this.selectedHanzisSubject.value;
+    const existingHanziIndex = selectedHanzis.findIndex(hanzi => hanzi.elementId === hanziElement.elementId);
 
-    if (existingChengyuCharIndex === -1) {
-      currentChengyuChars.push(chengyuChar);
-    } else if (existingChengyuCharIndex === currentChengyuChars.length - 1) {
-      currentChengyuChars.pop();
+    if (existingHanziIndex === -1) {
+      selectedHanzis.push(hanziElement);
+    } else if (existingHanziIndex === selectedHanzis.length - 1) {
+      selectedHanzis.pop();
     }
 
-    this.selectedChengyuCharsSubject.next(currentChengyuChars);
+    this.selectedHanzisSubject.next(selectedHanzis);
   }
 
   private isValidChengyu() {
-    const currentChengyuChars = this.selectedChengyuCharsSubject.value;
+    const selectedHanzis = this.selectedHanzisSubject.value;
     const correctChengyu = this.chengyus[this.currentChengyuIndex];
 
-    return correctChengyu === currentChengyuChars.map(c => c.chengyuChar).join('');
+    return correctChengyu === selectedHanzis.map(hanzi => hanzi.hanzi).join('');
   }
 
   private isLastChengyu() {
@@ -138,9 +139,4 @@ export class GameBoardService implements OnDestroy {
     this.destroySubject.next();
     this.destroySubject.complete();
   }
-}
-
-export interface ChengyuCharElement {
-  chengyuChar: string;
-  elementId: string;
 }
