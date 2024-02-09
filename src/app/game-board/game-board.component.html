@@ -3,15 +3,14 @@
     <app-game-score></app-game-score>
   </div>
 
-  <div class="game-chengyu-container"
-       [@correctChengyu]="correctChengyu ? 'correct' : ''"
-       (@correctChengyu.done)="onCorrectChengyuAnimationDone()"
-       [@incorrectChengyu]="incorrectChengyu ? 'incorrect' : ''"
-       (@incorrectChengyu.done)="onIncorrectChengyuAnimationDone()"
-       [class.chengyu-correct]="correctChengyu">
-    <span *ngFor="let char of selectedHanzis$ | async" @charSelected>
-      {{ char }}
-    </span>
+  <div class="game-chengyu-container">
+    <app-chengyu
+      [hanzis]="selectedHanzis$ | async"
+      [correctChengyu]="correctChengyu"
+      [incorrectChengyu]="incorrectChengyu"
+      (correctAnimationDone)="onCorrectChengyuAnimationDone()"
+      (incorrectAnimationDone)="onIncorrectChengyuAnimationDone()">
+    </app-chengyu>
   </div>
 
   <div class="game-wheel-container container">

@@ -1,0 +1,10 @@
+<div *ngIf="hanzis" class="chengyu"
+     [@correctChengyu]="correctChengyu ? 'correct' : ''"
+     (@correctChengyu.done)="correctAnimationDone.emit()"
+     [@incorrectChengyu]="incorrectChengyu ? 'incorrect' : ''"
+     (@incorrectChengyu.done)="incorrectAnimationDone.next()"
+     [class.chengyu-correct]="correctChengyu">
+    <span *ngFor="let hanzi of hanzis" @hanziSelected>
+      {{ hanzi }}
+    </span>
+</div>

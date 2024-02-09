@@ -1,0 +1,12 @@
+.chengyu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--app-hanzi-font-family);
+  font-size: 5rem;
+  font-weight: 500 !important;
+}
+
+.chengyu-correct {
+  color: var(--app-color-primary);
+}

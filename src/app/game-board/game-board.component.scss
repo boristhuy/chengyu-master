@@ -11,20 +11,10 @@
 
 .game-chengyu-container {
   color: var(--app-color-dark);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: var(--app-hanzi-font-family);
-  font-size: 5rem;
-  font-weight: 500 !important;
   margin-bottom: var(--app-layout-margin-distinct);
   min-height: 125px;
   position: relative;
   width: 100%;
-}
-
-.chengyu-correct {
-  color: var(--app-color-primary);
 }
 
 .game-wheel-container {

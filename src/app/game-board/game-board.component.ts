@@ -11,6 +11,7 @@ import {HanziComponent, HanziElement} from "./hanzi/hanzi.component";
 import {HotkeyDirective} from "./hotkey.directive";
 import {GameTimerService} from "./game-timer/game-timer.service";
 import {GameScoreService} from "./game-score/game-score.service";
+import {ChengyuComponent} from "./chengyu/chengyu.component";
 
 
 @Component({
@@ -26,6 +27,7 @@ import {GameScoreService} from "./game-score/game-score.service";
     ReactiveFormsModule,
     HanziComponent,
     HotkeyDirective,
+    ChengyuComponent,
   ],
   providers: [GameBoardService, GameScoreService, GameTimerService],
   templateUrl: './game-board.component.html',
