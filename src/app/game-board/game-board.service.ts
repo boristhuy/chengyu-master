@@ -1,11 +1,11 @@
 import {inject, Injectable, OnDestroy} from '@angular/core';
 import {BehaviorSubject, delay, ReplaySubject, Subject, takeUntil, tap} from "rxjs";
 import {GameTimerService} from "./game-timer/game-timer.service";
-import {GameScoreService} from "./game-score/game-score.service";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {GameTimesUpComponent} from "./game-times-up/game-times-up.component";
+import {NgbModal, NgbModalOptions} from "@ng-bootstrap/ng-bootstrap";
 import {Router} from "@angular/router";
 import {HanziElement} from "./hanzi/hanzi.component";
+import {GameTimerExpiredComponent} from "./game-timer-expired/game-timer-expired.component";
+import {GameWinComponent} from "./game-win/game-win.component";
 
 @Injectable()
 export class GameBoardService implements OnDestroy {
@@ -35,18 +35,21 @@ export class GameBoardService implements OnDestroy {
     tap(valid => {
       if (valid) {
         this.gameTimerService.stopTimer();
-        this.gameScoreService.computeScore(100, this.gameTimerService.getTimeLeft());
+        this.computeScore(100, this.gameTimerService.getTimeLeft());
       }
     })
   );
 
+  private gameScoreSubject = new BehaviorSubject(0);
+  gameScore$ = this.gameScoreSubject.asObservable();
+
   private currentChengyuIndex = -1;
 
-  constructor(private gameTimerService: GameTimerService, private gameScoreService: GameScoreService, private router: Router) {
+  constructor(private gameTimerService: GameTimerService, private router: Router) {
     gameTimerService.timerExpired$.pipe(
       takeUntil(this.destroySubject),
       delay(500),
-      tap(() => this.gameTimerExpired())
+      tap(() => this.handleGameTimerExpired())
     ).subscribe();
   }
 
@@ -54,6 +57,7 @@ export class GameBoardService implements OnDestroy {
     this.clearSelectedHanzis();
 
     if (this.isLastChengyu()) {
+      this.handleGameWin();
       return;
     }
 
@@ -70,18 +74,22 @@ export class GameBoardService implements OnDestroy {
     this.selectedHanzisSubject.next([]);
   }
 
-  private gameTimerExpired() {
-    const modalRef = this.modalService.open(GameTimesUpComponent, {
-      centered: true,
-      size: 'sm',
-      backdrop: 'static',
-      keyboard: false,
-      modalDialogClass: 'app-modal-container',
-      backdropClass: 'app-modal-backdrop'
-    });
+  private handleGameTimerExpired() {
+    const modalRef = this.modalService.open(GameTimerExpiredComponent, modalOptions);
 
-    modalRef.result.then(
-      (result) => {
+    modalRef.result.then((result) => {
+        if (result === 'play') {
+          this.restartGame();
+        }
+      }
+    );
+  }
+
+  private handleGameWin() {
+    const modalRef = this.modalService.open(GameWinComponent, modalOptions);
+    modalRef.componentInstance.score = this.gameScoreSubject.getValue();
+
+    modalRef.result.then((result) => {
         if (result === 'play') {
           this.restartGame();
         }
@@ -135,8 +143,31 @@ export class GameBoardService implements OnDestroy {
     return characters.join('');
   }
 
+  private computeScore(basePoint: number, timeLeft: number): void {
+    const currentScore = this.gameScoreSubject.getValue();
+
+    const timeBonus = this.computeTimeBonus(timeLeft);
+    const addedScore = basePoint + timeBonus;
+
+    this.gameScoreSubject.next(currentScore + addedScore);
+  }
+
+  private computeTimeBonus(remainingTime: number): number {
+    return remainingTime * 10;
+  }
+
+
   ngOnDestroy(): void {
     this.destroySubject.next();
     this.destroySubject.complete();
   }
 }
+
+const modalOptions: NgbModalOptions = {
+  centered: true,
+  size: 'sm',
+  backdrop: 'static',
+  keyboard: false,
+  modalDialogClass: 'app-modal-container',
+  backdropClass: 'app-modal-backdrop'
+};

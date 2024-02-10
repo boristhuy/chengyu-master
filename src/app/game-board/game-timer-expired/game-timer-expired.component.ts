@@ -2,12 +2,12 @@ import {Component, inject} from '@angular/core';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'app-game-times-up',
+  selector: 'app-game-timer-expired',
   standalone: true,
   imports: [],
-  templateUrl: './game-times-up.component.html',
-  styleUrl: './game-times-up.component.scss'
+  templateUrl: './game-timer-expired.component.html',
+  styleUrl: './game-timer-expired.component.scss'
 })
-export class GameTimesUpComponent {
+export class GameTimerExpiredComponent {
   activeModal = inject(NgbActiveModal);
 }

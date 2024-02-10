@@ -10,7 +10,6 @@ import {map, Observable, Subject, takeUntil, tap} from "rxjs";
 import {HanziComponent, HanziElement} from "./hanzi/hanzi.component";
 import {HotkeyDirective} from "./hotkey.directive";
 import {GameTimerService} from "./game-timer/game-timer.service";
-import {GameScoreService} from "./game-score/game-score.service";
 import {ChengyuComponent} from "./chengyu/chengyu.component";
 
 
@@ -29,7 +28,7 @@ import {ChengyuComponent} from "./chengyu/chengyu.component";
     HotkeyDirective,
     ChengyuComponent,
   ],
-  providers: [GameBoardService, GameScoreService, GameTimerService],
+  providers: [GameBoardService, GameTimerService],
   templateUrl: './game-board.component.html',
   styleUrl: './game-board.component.scss'
 })
@@ -47,6 +46,8 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild(GameCanvasComponent)
   canvasComponent!: GameCanvasComponent;
+
+  gameScore$!: Observable<number>;
 
   constructor(private gameBoardService: GameBoardService) {
     this.currentChengyu$ = this.gameBoardService.currentChengyu$;
@@ -69,6 +70,8 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
         }
       })
     ).subscribe();
+
+    this.gameScore$ = this.gameBoardService.gameScore$;
   }
 
   ngAfterViewInit(): void {

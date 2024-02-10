@@ -1,6 +1,6 @@
 <div class="game-board-container" @gameLoad>
   <div class="game-score-container">
-    <app-game-score></app-game-score>
+    <app-game-score [score]="(gameScore$ | async) || 0"></app-game-score>
   </div>
 
   <div class="game-chengyu-container">
@@ -59,7 +59,7 @@
   </div>
 
   <div class="game-action-container">
-    <button class="app-button app-button-secondary"
+    <button class="app-button app-button-primary"
             hotkey="Space"
             (click)="skipChengyu()">
       Skip

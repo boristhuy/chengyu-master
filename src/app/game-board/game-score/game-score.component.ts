@@ -1,21 +1,6 @@
-import {Component, OnDestroy} from '@angular/core';
-import {
-  delay,
-  endWith,
-  finalize,
-  interval,
-  map,
-  Observable,
-  pairwise,
-  ReplaySubject,
-  startWith,
-  Subscription,
-  switchMap,
-  take,
-  tap
-} from "rxjs";
+import {Component, Input} from '@angular/core';
+import {BehaviorSubject, endWith, interval, map, Observable, pairwise, startWith, switchMap, take} from "rxjs";
 import {AsyncPipe, NgIf} from "@angular/common";
-import {GameScoreService} from "./game-score.service";
 
 @Component({
   selector: 'app-game-score',
@@ -28,21 +13,21 @@ import {GameScoreService} from "./game-score.service";
   templateUrl: './game-score.component.html',
   styleUrl: './game-score.component.scss'
 })
-export class GameScoreComponent implements OnDestroy {
-  scoreUpdated$ = new ReplaySubject<void>(1);
-  scoreUpdatedSubscription!: Subscription;
-  scoreDisplayed$: Observable<number>;
+export class GameScoreComponent {
 
-  constructor(private gameScoreService: GameScoreService) {
-    this.scoreDisplayed$ = this.gameScoreService.gameScore$.pipe(
-      pairwise(),
-      switchMap(([previousScore, currentScore]) => {
-        return this.animateScoreDisplayed(previousScore, currentScore).pipe(
-        )
-      }),
-      startWith(0),
-    );
+  @Input() set score(score: number) {
+    this.scoreDisplayedSubject.next(score);
   }
+
+  scoreDisplayedSubject = new BehaviorSubject<number>(0);
+  scoreDisplayed$: Observable<number> = this.scoreDisplayedSubject.asObservable().pipe(
+    startWith(0),
+    pairwise(),
+    switchMap(([previousScore, currentScore]) => {
+      return this.animateScoreDisplayed(previousScore, currentScore).pipe(
+      )
+    })
+  );
 
   animateScoreDisplayed(previousScore: number, currentScore: number) {
     const animationDuration = 500;
@@ -54,12 +39,6 @@ export class GameScoreComponent implements OnDestroy {
       map(step => Math.round(previousScore + (step * (currentScore - previousScore) / animationSteps))),
       endWith(currentScore)
     );
-  }
-
-  ngOnDestroy(): void {
-    if (this.scoreUpdatedSubscription) {
-      this.scoreUpdatedSubscription.unsubscribe();
-    }
   }
 
 }
