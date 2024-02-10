@@ -23,7 +23,7 @@ export class GameBoardService implements OnDestroy {
 
   private currentChengyuSubject = new BehaviorSubject('');
   currentChengyu$ = this.currentChengyuSubject.asObservable().pipe(
-    tap(() => this.gameTimerService.startTimer(10))
+    tap(() => this.gameTimerService.startTimer(15))
   );
 
   private selectedHanzisSubject = new BehaviorSubject<HanziElement[]>([]);
@@ -155,7 +155,6 @@ export class GameBoardService implements OnDestroy {
   private computeTimeBonus(remainingTime: number): number {
     return remainingTime * 10;
   }
-
 
   ngOnDestroy(): void {
     this.destroySubject.next();
