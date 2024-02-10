@@ -10,8 +10,7 @@ import {AsyncPipe, DecimalPipe} from "@angular/common";
     AsyncPipe,
     DecimalPipe
   ],
-  templateUrl: './start-game.component.html',
-  styleUrl: './start-game.component.scss'
+  templateUrl: './start-game.component.html'
 })
 export class StartGameComponent {
 

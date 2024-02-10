@@ -6,8 +6,7 @@ import {Subscription, tap} from "rxjs";
   selector: 'app-game-canvas',
   standalone: true,
   imports: [],
-  templateUrl: './game-canvas.component.html',
-  styleUrl: './game-canvas.component.css'
+  templateUrl: './game-canvas.component.html'
 })
 export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -58,8 +57,8 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     const canvasEndY = (endY - canvasRect.top) / this.scale;
 
     this.ctx.beginPath();
-    this.ctx.strokeStyle = '#f6c48e';
-    this.ctx.lineWidth = 6;
+    this.ctx.strokeStyle = '#a382f7';
+    this.ctx.lineWidth = 2.5;
     this.ctx.moveTo(canvasStartX, canvasStartY);
     this.ctx.lineTo(canvasEndX, canvasEndY);
     this.ctx.stroke();

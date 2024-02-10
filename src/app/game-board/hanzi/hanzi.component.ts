@@ -7,8 +7,7 @@ import {HotkeyDirective} from "../hotkey.directive";
   imports: [
     HotkeyDirective
   ],
-  templateUrl: './hanzi.component.html',
-  styleUrl: './hanzi.component.scss'
+  templateUrl: './hanzi.component.html'
 })
 export class HanziComponent {
   @Input()

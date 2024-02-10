@@ -13,13 +13,35 @@ export class GameBoardService implements OnDestroy {
 
   private modalService = inject(NgbModal);
 
-  chengyus = [
-    "学而不厌",
-    "温故知新",
-    "好学不倦",
-    "勤学好问",
-    "学无止境",
+  private chengyuDefinitions: ChengyuDefinition[] = [
+    {
+      hanzis: "学而不厌",
+      pinyin: ["xué", "ér", "bù", "yàn"],
+      meaning: "to have an insatiable desire to learn"
+    },
+    {
+      hanzis: "温故知新",
+      pinyin: ["wēn", "gù", "zhī", "xīn"],
+      meaning: "learning from the past"
+    },
+    {
+      hanzis: "好学不倦",
+      pinyin: ["hào", "xué", "bù", "juàn"],
+      meaning: "be never tired of learning"
+    },
+    {
+      hanzis: "勤学好问",
+      pinyin: ["qín", "xué", "hǎo", "wèn"],
+      meaning: "diligent in learning and eager to ask questions"
+    },
+    {
+      hanzis: "学无止境",
+      pinyin: ["xué", "wú", "zhǐ", "jìng"],
+      meaning: "there is no end to learning"
+    },
   ];
+
+  private chengyus = this.chengyuDefinitions.map(c => c.hanzis);
 
   private currentChengyuSubject = new BehaviorSubject('');
   currentChengyu$ = this.currentChengyuSubject.asObservable().pipe(
@@ -76,10 +98,15 @@ export class GameBoardService implements OnDestroy {
 
   private handleGameTimerExpired() {
     const modalRef = this.modalService.open(GameTimerExpiredComponent, modalOptions);
+    modalRef.componentInstance.chengyu = this.chengyuDefinitions[this.currentChengyuIndex];
 
     modalRef.result.then((result) => {
         if (result === 'play') {
           this.restartGame();
+        }
+
+        if (result === 'quit') {
+          this.quitGame();
         }
       }
     );
@@ -93,12 +120,20 @@ export class GameBoardService implements OnDestroy {
         if (result === 'play') {
           this.restartGame();
         }
+
+      if (result === 'quit') {
+        this.quitGame();
+      }
       }
     );
   }
 
   private restartGame() {
     this.router.navigate(['/game']);
+  }
+
+  private quitGame() {
+    this.router.navigate(['/']);
   }
 
   private validateChengyu() {
@@ -167,6 +202,12 @@ const modalOptions: NgbModalOptions = {
   size: 'sm',
   backdrop: 'static',
   keyboard: false,
-  modalDialogClass: 'app-modal-container',
-  backdropClass: 'app-modal-backdrop'
+  modalDialogClass: 'modal-container',
+  backdropClass: 'modal-backdrop'
 };
+
+export interface ChengyuDefinition {
+  hanzis: string;
+  pinyin: string[];
+  meaning: string;
+}

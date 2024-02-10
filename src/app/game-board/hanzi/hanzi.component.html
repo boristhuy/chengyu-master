@@ -1,8 +1,10 @@
 <input type="checkbox" class="btn-check" [attr.id]="id + '-input'"
        [hotkey]="hotkey"
        (click)="onClicked($event)">
-<label [attr.id]="id" [attr.for]="id + '-input'" class="char"
-       [class.char-checked]="checked"
-       [class.char-unchecked]="!checked">
+<label
+  [attr.id]="id"
+  [attr.for]="id + '-input'"
+  [class.button-hanzi-checked]="checked"
+  class="button button-primary button-hanzi">
   {{ value }}
 </label>

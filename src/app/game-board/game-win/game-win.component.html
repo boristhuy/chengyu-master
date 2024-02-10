@@ -1,14 +1,17 @@
 <div class="modal-header" ngbAutofocus>
   <div class="modal-title">
-    <div class="game-win-title">成语</div>
-    <div class="game-win-subtitle">Master!</div>
+    Congrats!
   </div>
 </div>
 <div class="modal-body">
-  <app-game-score [score]="score"></app-game-score>
+  <p class="m-0">Your final score</p>
+  <div class="game-win-score">{{ score }}</div>
 </div>
 <div class="modal-footer">
-  <button class="app-button app-button-primary" (click)="activeModal.close('play')">
+  <button class="button button-primary" (click)="activeModal.close('play')">
     Play again
+  </button>
+  <button class="button button-blue" (click)="activeModal.close('quit')">
+    Quit
   </button>
 </div>

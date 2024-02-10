@@ -1,8 +1,8 @@
 <svg width="300" height="300" viewBox="0 0 300 300">
-  <circle [@flicker]="flicker ? 'on' : 'off'" class="timer-circle"
+  <circle [@flicker]="flicker ? 'on' : 'off'" class="game-timer-circle"
           cx="150"
           cy="150" r="147"
-          stroke-width="6"
+          stroke-width="2.5"
           [attr.stroke-dashoffset]="strokeDashoffset"
           [class.transition-none]="!strokeTransitionEnabled"/>
 </svg>

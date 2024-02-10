@@ -29,8 +29,7 @@ import {ChengyuComponent} from "./chengyu/chengyu.component";
     ChengyuComponent,
   ],
   providers: [GameBoardService, GameTimerService],
-  templateUrl: './game-board.component.html',
-  styleUrl: './game-board.component.scss'
+  templateUrl: './game-board.component.html'
 })
 export class GameBoardComponent implements AfterViewInit, OnDestroy {
   private destroySubject = new Subject<void>();

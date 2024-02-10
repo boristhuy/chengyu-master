@@ -1,0 +1,15 @@
+.hanzi-container {
+  display: inline-flex;
+  flex-direction: column;
+  margin-bottom: var(--spacing-related);
+
+  .hanzi {
+    font-family: var(--font-family-hanzi);
+    font-size: 3rem;
+  }
+
+  .pinyin {
+    font-family: var(--font-family-lato);
+    font-weight: 600;
+  }
+}

@@ -4,10 +4,18 @@
   </div>
 </div>
 <div class="modal-body">
-  <p>You did great! With a bit more practice, you'll master it. Ready to try again?</p>
+  <p class="m-0">The correct chengyu was</p>
+  <span class="hanzi-container" *ngFor="let _ of [].constructor(chengyu.hanzis.length); let i = index">
+    <span class="hanzi">{{ chengyu.hanzis[i] }}</span>
+    <span class="pinyin">{{ chengyu.pinyin[i] }}</span>
+  </span>
+  <p class="m-0">to have an insatiable desire to learn</p>
 </div>
 <div class="modal-footer">
-  <button class="app-button app-button-primary" (click)="activeModal.close('play')">
+  <button class="button button-primary" (click)="activeModal.close('play')">
     Play again
+  </button>
+  <button class="button button-blue" (click)="activeModal.close('quit')">
+    Quit
   </button>
 </div>

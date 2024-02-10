@@ -10,7 +10,7 @@ export const chengyuAnimations = [
   ]),
   trigger('correctChengyu', [
     transition('* => correct', [
-      animate('0.5s ease-out', keyframes([
+      animate('.75s ease-out', keyframes([
         style({opacity: 0, transform: 'scale(1)', offset: 0}),
         style({opacity: 1, transform: 'scale(1.2)', offset: 0.3}),
         style({opacity: 1, transform: 'scale(1)', offset: 0.6}),

@@ -11,8 +11,7 @@ import {chengyuAnimations} from "./chengyu.animation";
     NgIf
   ],
   animations: chengyuAnimations,
-  templateUrl: './chengyu.component.html',
-  styleUrl: './chengyu.component.scss'
+  templateUrl: './chengyu.component.html'
 })
 export class ChengyuComponent {
   @Input()

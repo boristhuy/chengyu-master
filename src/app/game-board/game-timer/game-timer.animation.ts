@@ -1,6 +1,6 @@
-import {animate, animation, keyframes, style} from "@angular/animations";
+import {animate, animation, keyframes, style, transition, trigger, useAnimation} from "@angular/animations";
 
-export const flickerAnimation = animation([
+const flicker = animation([
   animate('{{ timing }}', keyframes([
     style({ opacity: 1 }),
     style({ opacity: 0.2 }),
@@ -8,4 +8,10 @@ export const flickerAnimation = animation([
     style({ opacity: 0.2 }),
     style({ opacity: 1 })
   ]))
-], {params: {timing: '0.2s'}});
+], {params: {timing: '0.25s'}});
+
+export const flickerAnimation = trigger('flicker', [
+  transition('* <=> *', useAnimation(flicker, {
+    params: {timing: '0.25s'}
+  }))
+]);

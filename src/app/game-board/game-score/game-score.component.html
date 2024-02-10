@@ -1,8 +1,9 @@
-<div class="score">
-  <div class="score-label">
-    Score
-  </div>
-  <div class="score-value">
-    {{ scoreDisplayed$ | async }}
+<div class="game-score">
+  <div class="progress game-score-progress" role="progressbar">
+    <div class="progress-bar progress-bar-striped" [ngStyle]="{ 'width': (progress$ | async) + '%' }">
+    </div>
+    <div class="game-score-value">
+      {{ scoreDisplayed$ | async }}
+    </div>
   </div>
 </div>

@@ -1,22 +1,14 @@
 import {Component, OnDestroy} from '@angular/core';
 import {Subscription, tap} from "rxjs";
 import {GameTimerService} from "./game-timer.service";
-import {transition, trigger, useAnimation} from "@angular/animations";
 import {flickerAnimation} from "./game-timer.animation";
 
 @Component({
   selector: 'app-game-timer',
   standalone: true,
   imports: [],
-  animations: [
-    trigger('flicker', [
-      transition('* <=> *', useAnimation(flickerAnimation, {
-        params: {timing: '0.2s'}
-      }))
-    ])
-  ],
-  templateUrl: './game-timer.component.html',
-  styleUrl: './game-timer.component.scss'
+  animations: [flickerAnimation],
+  templateUrl: './game-timer.component.html'
 })
 export class GameTimerComponent implements OnDestroy {
   strokeDashoffset = 0;

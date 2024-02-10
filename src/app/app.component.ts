@@ -8,8 +8,7 @@ import {ScalingService} from "./common/scaling.service";
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, AsyncPipe, NgStyle],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit, OnDestroy {
   private scaleSubscription!: Subscription;
@@ -26,7 +25,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.checkScale();
 
     this.scaleSubscription = this.scalingService.getScale().subscribe(scale => {
-      this.document.body.style.setProperty('--app-scale', `${scale}`);
+      this.document.body.style.setProperty('--scale', `${scale}`);
     });
   }
 
@@ -35,15 +34,15 @@ export class AppComponent implements OnInit, OnDestroy {
       this.scaleSubscription.unsubscribe();
     }
 
-    this.document.body.style.removeProperty('--app-scale');
+    this.document.body.style.removeProperty('--scale');
   }
 
   checkScale() {
     const height = window.innerHeight;
     let newScale: number;
 
-    if (height < 800) {
-      newScale = 0.85;
+    if (height < 650) {
+      newScale = 0.95;
     } else {
       newScale = 1;
     }

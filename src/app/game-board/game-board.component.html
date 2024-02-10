@@ -13,7 +13,7 @@
     </app-chengyu>
   </div>
 
-  <div class="game-wheel-container container">
+  <div class="game-hanzis-container">
     <div class="row g-0 position-relative h-100 z-1" *ngIf="currentChengyu$ | async as chengyu">
       <div class="col-12 d-flex justify-content-center align-items-center">
         <app-hanzi
@@ -58,11 +58,14 @@
     </div>
   </div>
 
-  <div class="game-action-container">
-    <button class="app-button app-button-primary"
+  <div class="game-actions-container">
+    <button class="button button-icon button-secondary">
+      <i class="bi bi-book-fill"></i>
+    </button>
+    <button class="button button-icon button-secondary"
             hotkey="Space"
             (click)="skipChengyu()">
-      Skip
+      <i class="bi bi-skip-forward-fill"></i>
     </button>
   </div>
 </div>

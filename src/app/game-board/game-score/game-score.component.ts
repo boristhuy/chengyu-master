@@ -1,17 +1,17 @@
 import {Component, Input} from '@angular/core';
 import {BehaviorSubject, endWith, interval, map, Observable, pairwise, startWith, switchMap, take} from "rxjs";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe, NgIf, NgStyle} from "@angular/common";
 
 @Component({
   selector: 'app-game-score',
   standalone: true,
   imports: [
     NgIf,
-    AsyncPipe
+    AsyncPipe,
+    NgStyle
   ],
   animations: [],
-  templateUrl: './game-score.component.html',
-  styleUrl: './game-score.component.scss'
+  templateUrl: './game-score.component.html'
 })
 export class GameScoreComponent {
 
@@ -28,6 +28,11 @@ export class GameScoreComponent {
       )
     })
   );
+
+  progress$: Observable<number> = this.scoreDisplayedSubject.asObservable().pipe(
+    startWith(0),
+    map(score => Math.min(100, score / 500 * 100))
+  )
 
   animateScoreDisplayed(previousScore: number, currentScore: number) {
     const animationDuration = 500;
