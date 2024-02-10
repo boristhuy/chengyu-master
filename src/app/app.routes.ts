@@ -4,17 +4,12 @@ import {StartGameComponent} from "./start-game/start-game.component";
 
 export const routes: Routes = [
   {
-    path: 'start',
+    path: '',
     component: StartGameComponent
   },
   {
     path: 'game',
     component: GameBoardComponent,
     data: {reloadOnSameRoute: true}
-  },
-  {
-    path: '',
-    redirectTo: 'start',
-    pathMatch: 'full'
   }
 ];
