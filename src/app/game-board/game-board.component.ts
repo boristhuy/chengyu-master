@@ -1,4 +1,13 @@
-import {AfterViewInit, Component, OnDestroy, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {GameCanvasComponent} from "./game-canvas/game-canvas.component";
@@ -6,7 +15,7 @@ import {GameScoreComponent} from "./game-score/game-score.component";
 import {GameTimerComponent} from "./game-timer/game-timer.component";
 import {gameBoardAnimation} from "./game-board.animation";
 import {GameBoardService} from "./game-board.service";
-import {map, Observable, Subject, takeUntil, tap} from "rxjs";
+import {distinctUntilChanged, filter, fromEvent, map, Observable, Subject, takeUntil, tap} from "rxjs";
 import {HanziComponent, HanziElement} from "./hanzi/hanzi.component";
 import {HotkeyDirective} from "./hotkey.directive";
 import {GameTimerService} from "./game-timer/game-timer.service";
@@ -31,7 +40,7 @@ import {ChengyuComponent} from "./chengyu/chengyu.component";
   providers: [GameBoardService, GameTimerService],
   templateUrl: './game-board.component.html'
 })
-export class GameBoardComponent implements AfterViewInit, OnDestroy {
+export class GameBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroySubject = new Subject<void>();
 
   currentChengyu$!: Observable<string>;
@@ -42,6 +51,9 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
 
   @ViewChildren(HanziComponent)
   hanziComponents!: QueryList<HanziComponent>;
+
+  @ViewChild('gameContainer', {static: true})
+  gameHanzisContainer!: ElementRef;
 
   @ViewChild(GameCanvasComponent)
   canvasComponent!: GameCanvasComponent;
@@ -71,6 +83,20 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
     ).subscribe();
 
     this.gameScore$ = this.gameBoardService.gameScore$;
+  }
+
+  ngOnInit() {
+    fromEvent(this.gameHanzisContainer.nativeElement, 'touchmove').pipe(
+      takeUntil(this.destroySubject),
+      map((event: any) => {
+        event.preventDefault();
+        const touch = event.touches[0];
+        return document.elementsFromPoint(touch.clientX, touch.clientY);
+      }),
+      filter(elements => elements.length > 0),
+      distinctUntilChanged((prevElements, currElements) => prevElements[0].id === currElements[0].id),
+      tap(elements => this.processTouchedElements(elements)),
+    ).subscribe();
   }
 
   ngAfterViewInit(): void {
@@ -141,5 +167,14 @@ export class GameBoardComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroySubject.next();
     this.destroySubject.complete();
+  }
+
+  private processTouchedElements(elements: Element[]): void {
+    elements.forEach(el => {
+      const matchingComponent = this.hanziComponents.find(component => component.id === el.id);
+      if (matchingComponent) {
+        matchingComponent.click();
+      }
+    });
   }
 }

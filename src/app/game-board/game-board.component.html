@@ -13,7 +13,7 @@
     </app-chengyu>
   </div>
 
-  <div class="game-hanzis-container">
+  <div class="game-hanzis-container" #gameContainer>
     <div class="row g-0 position-relative h-100 z-1" *ngIf="currentChengyu$ | async as chengyu">
       <div class="col-12 d-flex justify-content-center align-items-center">
         <app-hanzi

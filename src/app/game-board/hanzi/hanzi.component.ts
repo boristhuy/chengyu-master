@@ -31,6 +31,12 @@ export class HanziComponent {
 
     this.clicked.next({hanzi: this.value, elementId: this.id})
   }
+
+  click() {
+    this.checked = !this.checked;
+
+    this.clicked.next({hanzi: this.value, elementId: this.id})
+  }
 }
 
 export interface HanziElement {
