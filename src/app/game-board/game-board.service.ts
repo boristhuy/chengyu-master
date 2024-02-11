@@ -56,11 +56,13 @@ export class GameBoardService implements OnDestroy {
     delay(500),
     tap(valid => {
       if (valid) {
-        this.gameTimerService.stopTimer();
         this.computeScore(100, this.gameTimerService.getTimeLeft());
       }
     })
   );
+
+  private isSkippedChengyuSubject = new ReplaySubject(1);
+  isSkippedChengyu$ = this.isSkippedChengyuSubject.asObservable();
 
   private gameScoreSubject = new BehaviorSubject(0);
   gameScore$ = this.gameScoreSubject.asObservable();
@@ -76,15 +78,28 @@ export class GameBoardService implements OnDestroy {
   }
 
   getNextChengyu() {
-    this.clearSelectedHanzis();
-
     if (this.isLastChengyu()) {
-      this.handleGameWin();
+      this.handleGameEnd();
       return;
     }
 
+    this.clearSelectedHanzis();
+
     this.currentChengyuIndex++;
     this.currentChengyuSubject.next(this.shuffleChengyu(this.chengyus[this.currentChengyuIndex]));
+  }
+
+  skipChengyu() {
+    if (this.isLastChengyu()) {
+      this.handleGameEnd();
+      return;
+    }
+
+    this.clearSelectedHanzis();
+
+    this.gameTimerService.stopTimer();
+
+    this.isSkippedChengyuSubject.next(true);
   }
 
   selectHanzi(hanzi: HanziElement) {
@@ -112,7 +127,7 @@ export class GameBoardService implements OnDestroy {
     );
   }
 
-  private handleGameWin() {
+  private handleGameEnd() {
     const modalRef = this.modalService.open(GameWinComponent, modalOptions);
     modalRef.componentInstance.score = this.gameScoreSubject.getValue();
 
@@ -140,6 +155,10 @@ export class GameBoardService implements OnDestroy {
     const selectedHanzis = this.selectedHanzisSubject.value;
     if (selectedHanzis.length === 4) {
       const validChengyu = this.isValidChengyu();
+      if (validChengyu) {
+        this.gameTimerService.stopTimer();
+      }
+
       this.isValidChengyuSubject.next(validChengyu);
     }
   }

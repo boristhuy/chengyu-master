@@ -18,6 +18,9 @@ export class ChengyuComponent {
   hanzis: string[] | null = [];
 
   @Input()
+  skippedChengyu: boolean = false;
+
+  @Input()
   correctChengyu: boolean = false;
 
   @Input()
@@ -28,4 +31,7 @@ export class ChengyuComponent {
 
   @Output()
   incorrectAnimationDone = new EventEmitter<void>();
+
+  @Output()
+  skippedAnimationDone = new EventEmitter<void>();
 }

@@ -15,7 +15,7 @@ import {GameScoreComponent} from "./game-score/game-score.component";
 import {GameTimerComponent} from "./game-timer/game-timer.component";
 import {gameBoardAnimation} from "./game-board.animation";
 import {GameBoardService} from "./game-board.service";
-import {distinctUntilChanged, filter, fromEvent, map, Observable, Subject, takeUntil, tap} from "rxjs";
+import {distinctUntilChanged, filter, fromEvent, map, Observable, Subject, take, takeUntil, tap} from "rxjs";
 import {HanziComponent, HanziElement} from "./hanzi/hanzi.component";
 import {HotkeyDirective} from "./hotkey.directive";
 import {GameTimerService} from "./game-timer/game-timer.service";
@@ -48,6 +48,7 @@ export class GameBoardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   correctChengyu = false;
   incorrectChengyu = false;
+  skippedChengyu = false;
 
   @ViewChildren(HanziComponent)
   hanziComponents!: QueryList<HanziComponent>;
@@ -61,42 +62,17 @@ export class GameBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   gameScore$!: Observable<number>;
 
   constructor(private gameBoardService: GameBoardService) {
-    this.currentChengyu$ = this.gameBoardService.currentChengyu$;
-
-    this.selectedHanzis$ = this.gameBoardService.selectedHanzi$.pipe(
-      tap(selectedHanzis => {
-        this.refreshAllHanzis(selectedHanzis);
-        this.refreshAllLinesBetweenHanzis(selectedHanzis);
-      }),
-      map(selectedHanzis => selectedHanzis.map(hanzi => hanzi.hanzi))
-    );
-
-    this.gameBoardService.isValidChengyu$.pipe(
-      takeUntil(this.destroySubject),
-      tap(validChengyu => {
-        if (validChengyu) {
-          this.handleCorrectChengyu();
-        } else {
-          this.handleIncorrectChengyu();
-        }
-      })
-    ).subscribe();
-
-    this.gameScore$ = this.gameBoardService.gameScore$;
   }
 
   ngOnInit() {
-    fromEvent(this.gameHanzisContainer.nativeElement, 'touchmove').pipe(
-      takeUntil(this.destroySubject),
-      map((event: any) => {
-        event.preventDefault();
-        const touch = event.touches[0];
-        return document.elementsFromPoint(touch.clientX, touch.clientY);
-      }),
-      filter(elements => elements.length > 0),
-      distinctUntilChanged((prevElements, currElements) => prevElements[0].id === currElements[0].id),
-      tap(elements => this.processTouchedElements(elements)),
-    ).subscribe();
+    this.currentChengyu$ = this.gameBoardService.currentChengyu$;
+
+    this.subscribeToSelectedHanzis();
+    this.subscribeToValidChengyu();
+    this.subscribeToSkippedChengyu();
+    this.subscribeToTouchMoveEvents();
+
+    this.gameScore$ = this.gameBoardService.gameScore$;
   }
 
   ngAfterViewInit(): void {
@@ -108,7 +84,7 @@ export class GameBoardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   skipChengyu() {
-    this.gameBoardService.getNextChengyu();
+    this.gameBoardService.skipChengyu();
   }
 
   onCorrectChengyuAnimationDone() {
@@ -125,6 +101,58 @@ export class GameBoardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.incorrectChengyu = false;
       this.gameBoardService.clearSelectedHanzis();
     }
+  }
+
+  onSkippedChengyuAnimationDone() {
+    // TODO fix animation done callback being triggered on first load
+    if (this.skippedChengyu) {
+      this.skippedChengyu = false;
+      this.gameBoardService.getNextChengyu();
+    }
+  }
+
+  private subscribeToSelectedHanzis() {
+    this.selectedHanzis$ = this.gameBoardService.selectedHanzi$.pipe(
+      tap(selectedHanzis => {
+        this.refreshAllHanzis(selectedHanzis);
+        this.refreshAllLinesBetweenHanzis(selectedHanzis);
+      }),
+      map(selectedHanzis => selectedHanzis.map(hanzi => hanzi.hanzi))
+    );
+  }
+
+  private subscribeToValidChengyu() {
+    this.gameBoardService.isValidChengyu$.pipe(
+      takeUntil(this.destroySubject),
+      tap(validChengyu => {
+        if (validChengyu) {
+          this.handleCorrectChengyu();
+        } else {
+          this.handleIncorrectChengyu();
+        }
+      })
+    ).subscribe();
+  }
+
+  private subscribeToSkippedChengyu() {
+    this.gameBoardService.isSkippedChengyu$.pipe(
+      takeUntil(this.destroySubject),
+      tap(() => this.skippedChengyu = true)
+    ).subscribe();
+  }
+
+  private subscribeToTouchMoveEvents() {
+    fromEvent(this.gameHanzisContainer.nativeElement, 'touchmove').pipe(
+      takeUntil(this.destroySubject),
+      map((event: any) => {
+        event.preventDefault();
+        const touch = event.touches[0];
+        return document.elementsFromPoint(touch.clientX, touch.clientY);
+      }),
+      filter(elements => elements.length > 0),
+      distinctUntilChanged((prevElements, currElements) => prevElements[0].id === currElements[0].id),
+      tap(elements => this.processTouchedElements(elements)),
+    ).subscribe();
   }
 
   private handleCorrectChengyu(): void {
@@ -164,11 +192,6 @@ export class GameBoardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.destroySubject.next();
-    this.destroySubject.complete();
-  }
-
   private processTouchedElements(elements: Element[]): void {
     elements.forEach(el => {
       const matchingComponent = this.hanziComponents.find(component => component.id === el.id);
@@ -176,5 +199,10 @@ export class GameBoardComponent implements OnInit, AfterViewInit, OnDestroy {
         matchingComponent.click();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroySubject.next();
+    this.destroySubject.complete();
   }
 }

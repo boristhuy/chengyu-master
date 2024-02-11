@@ -8,8 +8,10 @@
       [hanzis]="selectedHanzis$ | async"
       [correctChengyu]="correctChengyu"
       [incorrectChengyu]="incorrectChengyu"
+      [skippedChengyu]="skippedChengyu"
       (correctAnimationDone)="onCorrectChengyuAnimationDone()"
-      (incorrectAnimationDone)="onIncorrectChengyuAnimationDone()">
+      (incorrectAnimationDone)="onIncorrectChengyuAnimationDone()"
+      (skippedAnimationDone)="onSkippedChengyuAnimationDone()">
     </app-chengyu>
   </div>
 

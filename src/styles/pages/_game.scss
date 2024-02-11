@@ -68,16 +68,22 @@
 }
 
 .chengyu {
-  display: flex;
-  justify-content: center;
   align-items: center;
   color: var(--color-light);
-  font-family: var(--font-family-hanzi);
-  font-size: 5rem;
-}
+  display: flex;
+  justify-content: center;
+  height: 100%;
 
-.chengyu-correct {
-  color: var(--color-primary);
+  .hanzi {
+    font-family: var(--font-family-hanzi);
+    font-size: 5rem;
+  }
+
+  .text {
+    font-family: var(--font-family-titan);
+    font-size: 4rem;
+    text-transform: uppercase;
+  }
 }
 
 .game-timer-circle {

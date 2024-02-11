@@ -1,10 +1,16 @@
-<div *ngIf="hanzis" class="chengyu"
+<div class="chengyu"
      [@correctChengyu]="correctChengyu ? 'correct' : ''"
      (@correctChengyu.done)="correctAnimationDone.emit()"
      [@incorrectChengyu]="incorrectChengyu ? 'incorrect' : ''"
      (@incorrectChengyu.done)="incorrectAnimationDone.next()"
-     [class.chengyu-correct]="correctChengyu">
-    <span *ngFor="let hanzi of hanzis" @hanziSelected>
+     [@skippedChengyu]="skippedChengyu ? 'skipped' : ''"
+     (@skippedChengyu.done)="skippedAnimationDone.next()">
+  <ng-container *ngIf="hanzis && !skippedChengyu">
+    <span class="hanzi" *ngFor="let hanzi of hanzis" @hanziSelected>
       {{ hanzi }}
     </span>
+  </ng-container>
+  <ng-container *ngIf="skippedChengyu">
+    <span class="text">Skipped!</span>
+  </ng-container>
 </div>
