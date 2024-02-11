@@ -57,7 +57,7 @@ export class GameCanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     const canvasEndY = (endY - canvasRect.top) / this.scale;
 
     this.ctx.beginPath();
-    this.ctx.strokeStyle = '#a382f7';
+    this.ctx.strokeStyle = '#759BF8FF';
     this.ctx.lineWidth = 2.5;
     this.ctx.moveTo(canvasStartX, canvasStartY);
     this.ctx.lineTo(canvasEndX, canvasEndY);

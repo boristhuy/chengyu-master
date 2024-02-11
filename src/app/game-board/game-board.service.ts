@@ -78,23 +78,18 @@ export class GameBoardService implements OnDestroy {
   }
 
   getNextChengyu() {
+    this.clearSelectedHanzis();
+
     if (this.isLastChengyu()) {
       this.handleGameEnd();
       return;
     }
-
-    this.clearSelectedHanzis();
 
     this.currentChengyuIndex++;
     this.currentChengyuSubject.next(this.shuffleChengyu(this.chengyus[this.currentChengyuIndex]));
   }
 
   skipChengyu() {
-    if (this.isLastChengyu()) {
-      this.handleGameEnd();
-      return;
-    }
-
     this.clearSelectedHanzis();
 
     this.gameTimerService.stopTimer();
